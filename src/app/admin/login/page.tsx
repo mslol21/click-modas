@@ -39,9 +39,10 @@ export default function AdminLoginPage() {
       }
 
       const { data: profile, error: roleError } = await supabase
-        .from("profiles")
+        .from("admin_roles")
         .select("role")
-        .eq("id", data.user.id)
+        .eq("user_id", data.user.id)
+        .in("role", ["admin", "super_admin"])
         .single();
 
       if (roleError || !profile || !["admin", "super_admin"].includes(profile.role)) {
