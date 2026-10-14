@@ -97,7 +97,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const product = productsState.find((p) => p.slug === slug);
-  if (!product) return null;
+  if (!product || !product.is_published) return null;
 
   return {
     ...product,
@@ -134,12 +134,18 @@ export interface CreateOrderInput {
 
 export async function createOrderIntention(input: CreateOrderInput) {
   // 1. Re-validate each item and current prices/stock
+  if (!input.items.length) throw new Error("O carrinho está vazio.");
+  if (!["retirada_galeria_arco_iris", "motoboy"].includes(input.deliveryMethod)) throw new Error("Modalidade de entrega inválida.");
   const orderItems = [];
   let subtotal = 0;
+  const requested = new Map<string, number>();
 
   for (const item of input.items) {
+    if (!Number.isSafeInteger(item.quantity) || item.quantity <= 0) throw new Error("Quantidade inválida.");
+    const accumulated = (requested.get(item.variantId) || 0) + item.quantity;
+    requested.set(item.variantId, accumulated);
     const product = productsState.find((p) => p.id === item.productId);
-    if (!product) {
+    if (!product || !product.is_published) {
       throw new Error(`Produto não encontrado para o ID ${item.productId}`);
     }
 
@@ -148,7 +154,7 @@ export async function createOrderIntention(input: CreateOrderInput) {
       throw new Error(`Variante não encontrada para o produto ${product.name}`);
     }
 
-    if (variant.stock < item.quantity) {
+    if (variant.stock < accumulated) {
       throw new Error(
         `Estoque insuficiente para ${product.name} (Tam: ${variant.size}). Disponível: ${variant.stock}`
       );
@@ -195,7 +201,7 @@ export async function createOrderIntention(input: CreateOrderInput) {
     payment_method: null,
     customer_notes: input.customerNotes || null,
     internal_notes: null,
-    whatsapp_message_sent: true,
+    whatsapp_message_sent: false,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     items: orderItems.map((item) => ({ ...item, order_id: orderId })),
@@ -256,6 +262,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus, in
   const order = ordersState.find((o) => o.id === orderId);
   if (!order) throw new Error("Pedido não encontrado");
 
+  const previousStatus = order.status;
   order.status = status;
   if (internalNotes !== undefined) order.internal_notes = internalNotes;
   if (deliveryFee !== undefined) {
@@ -265,14 +272,12 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus, in
   order.updated_at = new Date().toISOString();
 
   // If order is confirmed or paid, reserve/adjust stock safely
-  if (status === "confirmado" || status === "pago") {
+  if ((status === "confirmado" || status === "pago") && !["confirmado", "pago", "em_separacao", "enviado", "entregue"].includes(previousStatus)) {
     for (const item of order.items || []) {
       for (const prod of productsState) {
         const variant = prod.variants?.find((v) => v.id === item.variant_id);
-        if (variant && variant.stock >= item.quantity) {
-          // decrement variant stock safely
-          variant.stock -= item.quantity;
-        }
+        if (!variant || variant.stock < item.quantity) throw new Error("Estoque insuficiente para confirmar o pedido.");
+        variant.stock -= item.quantity;
       }
     }
   }
