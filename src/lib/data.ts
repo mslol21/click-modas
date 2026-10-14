@@ -93,7 +93,7 @@ export async function getStoreSettings():Promise<StoreSettingsGeneral> { const {
 
 export async function getSizeGuide():Promise<SizeGuideItem[]> { const {data,error}=await db().from("store_settings").select("value").eq("key","size_guide").maybeSingle(); if(error) throw new Error(error.message); return (data?.value??[]) as SizeGuideItem[]; }
 
-export async function getInstitutional():Promise<{about:string; privacy:string; terms:string}> { const {data,error}=await db().from("store_settings").select("value").eq("key","institutional").maybeSingle(); if(error) throw new Error(error.message); return (data?.value??{about:"",privacy:"",terms:""}) as {about:string;privacy:string;terms:string}; }
+export async function getInstitutional():Promise<{about:string;delivery:string;exchange:string;privacy:string;terms:string}> { const {data,error}=await db().from("store_settings").select("value").eq("key","institutional").maybeSingle(); if(error) throw new Error(error.message); return (data?.value??{about:"",delivery:"",exchange:"",privacy:"",terms:""}) as {about:string;delivery:string;exchange:string;privacy:string;terms:string}; }
 
 export interface CreateOrderItemInput {
   productId: string;
