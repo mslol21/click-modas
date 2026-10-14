@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Image from "next/image";
 import { Product, Category } from "@/types/database";
@@ -31,7 +33,9 @@ export function ProductsListClient({
   initialProducts,
   categories,
 }: ProductsListClientProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -44,40 +48,77 @@ export function ProductsListClient({
     return matchesSearch && matchesCategory;
   });
 
-  const handleDuplicate = (product: Product) => {
-    const duplicated: Product = {
-      ...product,
-      id: `prod-copy-${Date.now()}`,
-      name: `${product.name} (Cópia)`,
-      slug: `${product.slug}-copia-${Date.now().toString(36).substring(2, 6)}`,
-      sku_base: `${product.sku_base || "CMD"}-CPY`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      variants: product.variants?.map((v) => ({
-        ...v,
-        id: `var-copy-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-        sku: `${v.sku}-CPY`,
-      })),
-    };
-
-    setProducts([duplicated, ...products]);
-    toast.success(`Produto "${product.name}" duplicado com sucesso!`);
+  const ensureAdmin = async () => {
+    const supabase = createClient();
+    if (!supabase) throw new Error("Supabase não configurado.");
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) throw new Error("Faça login novamente para gerenciar produtos.");
+    const { data: role, error: roleError } = await supabase.from("admin_roles").select("user_id").eq("user_id", user.id).maybeSingle();
+    if (roleError || !role) throw new Error("Seu usuário não possui permissão de administrador.");
+    return supabase;
   };
 
-  const handleDelete = (productId: string, productName: string) => {
-    if (confirm(`Tem certeza que deseja excluir o produto "${productName}"?`)) {
-      setProducts(products.filter((p) => p.id !== productId));
-      toast.success(`Produto "${productName}" excluído.`);
-    }
+  const handleDuplicate = async (product: Product) => {
+    if (busyId) return;
+    setBusyId(product.id);
+    try {
+      const supabase = await ensureAdmin();
+      const slug = product.slug + "-copia-" + crypto.randomUUID().slice(0, 8);
+      const { data, error } = await supabase.from("products").insert({
+        name: product.name + " (Cópia)", slug, category_id: product.category_id,
+        description: product.description, price: product.price, promotional_price: product.promotional_price,
+        sku_base: null, is_published: false, is_featured: false,
+      }).select("*").single();
+      if (error) throw error;
+      const variants = (product.variants ?? []).map(v => ({
+        product_id: data.id, size: v.size, color: v.color, color_hex: v.color_hex,
+        sku: v.sku + "-CPY-" + data.id.slice(0, 8), stock: 0,
+      }));
+      if (variants.length) {
+        const { error: variantsError } = await supabase.from("product_variants").insert(variants);
+        if (variantsError) {
+          await supabase.from("products").delete().eq("id", data.id);
+          throw variantsError;
+        }
+      }
+      toast.success("Cópia criada como rascunho, sem estoque.");
+      router.refresh();
+      window.location.reload();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Erro ao duplicar produto."); }
+    finally { setBusyId(null); }
   };
 
-  const handleTogglePublished = (productId: string) => {
-    setProducts(
-      products.map((p) =>
-        p.id === productId ? { ...p, is_published: !p.is_published } : p
-      )
-    );
-    toast.info("Status de publicação alterado.");
+  const handleDelete = async (productId: string, productName: string) => {
+    if (busyId || !window.confirm(`Excluir definitivamente "${productName}" do Supabase? Essa ação não pode ser desfeita.`)) return;
+    setBusyId(productId);
+    try {
+      const supabase = await ensureAdmin();
+      const { error } = await supabase.from("products").delete().eq("id", productId);
+      if (error) throw error;
+      const { data: stillExists, error: checkError } = await supabase.from("products").select("id").eq("id", productId).maybeSingle();
+      if (checkError) throw checkError;
+      if (stillExists) throw new Error("Exclusão não autorizada no banco. Verifique as políticas RLS.");
+      setProducts(prev => prev.filter(p => p.id !== productId));
+      toast.success(`Produto "${productName}" excluído do Supabase.`);
+      router.refresh();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Erro ao excluir produto."); }
+    finally { setBusyId(null); }
+  };
+
+  const handleTogglePublished = async (productId: string) => {
+    if (busyId) return;
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    setBusyId(productId);
+    try {
+      const supabase = await ensureAdmin();
+      const { data, error } = await supabase.from("products").update({ is_published: !product.is_published }).eq("id", productId).select("id,is_published").single();
+      if (error) throw error;
+      setProducts(prev => prev.map(p => p.id === productId ? {...p, is_published: data.is_published} : p));
+      toast.success(data.is_published ? "Produto publicado." : "Produto despublicado.");
+      router.refresh();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Erro ao alterar publicação."); }
+    finally { setBusyId(null); }
   };
 
   return (
@@ -149,7 +190,7 @@ export function ProductsListClient({
                 const cover =
                   product.images?.find((img) => img.is_cover)?.image_url ||
                   product.images?.[0]?.image_url ||
-                  "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=100&auto=format&fit=crop&q=80";
+                  "/click-modas-logo.svg";
 
                 const totalStock =
                   product.variants?.reduce((sum, v) => sum + v.stock, 0) ?? 0;
