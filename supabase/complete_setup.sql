@@ -213,7 +213,7 @@ begin
         where admin_roles.user_id = $1
     );
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql security definer set search_path = public;
 
 create or replace function public.handle_updated_at()
 returns trigger as $$
@@ -307,6 +307,29 @@ alter table public.order_items enable row level security;
 alter table public.banners enable row level security;
 alter table public.store_settings enable row level security;
 alter table public.audit_logs enable row level security;
+
+-- Políticas de Profiles e Roles
+drop policy if exists "Users can view own profile" on public.profiles;
+drop policy if exists "Users can update own profile" on public.profiles;
+drop policy if exists "Users can insert own profile" on public.profiles;
+
+create policy "Users can view own profile" on public.profiles
+    for select using (auth.uid() = id or public.is_admin(auth.uid()) or auth.role() = 'service_role');
+
+create policy "Users can update own profile" on public.profiles
+    for update using (auth.uid() = id);
+
+create policy "Users can insert own profile" on public.profiles
+    for insert with check (auth.uid() = id or auth.role() = 'service_role');
+
+drop policy if exists "Users can read own role" on public.admin_roles;
+drop policy if exists "Admins can manage roles" on public.admin_roles;
+
+create policy "Users can read own role" on public.admin_roles
+    for select using (auth.uid() = user_id);
+
+create policy "Admins can manage roles" on public.admin_roles
+    for all using (public.is_admin(auth.uid()) or auth.role() = 'service_role');
 
 -- Políticas de Leitura Pública
 create policy "Public can view active categories" on public.categories

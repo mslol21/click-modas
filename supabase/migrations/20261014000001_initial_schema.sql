@@ -243,7 +243,7 @@ begin
         where admin_roles.user_id = $1
     );
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql security definer set search_path = public;
 
 -- Trigger to auto-update updated_at timestamp
 create or replace function public.handle_updated_at()
@@ -347,12 +347,29 @@ alter table public.collection_products enable row level security;
 alter table public.store_settings enable row level security;
 alter table public.audit_logs enable row level security;
 
--- 1. PROFILES & ROLES: Only self or admin can view profile
-create policy "Users can view own profile" on public.profiles
-    for select using (auth.uid() = id or public.is_admin(auth.uid()));
+-- 1. PROFILES & ROLES
+drop policy if exists "Users can view own profile" on public.profiles;
+drop policy if exists "Users can update own profile" on public.profiles;
+drop policy if exists "Users can insert own profile" on public.profiles;
 
-create policy "Admins can view roles" on public.admin_roles
-    for select using (public.is_admin(auth.uid()));
+create policy "Users can view own profile" on public.profiles
+    for select using (auth.uid() = id or public.is_admin(auth.uid()) or auth.role() = 'service_role');
+
+create policy "Users can update own profile" on public.profiles
+    for update using (auth.uid() = id);
+
+create policy "Users can insert own profile" on public.profiles
+    for insert with check (auth.uid() = id or auth.role() = 'service_role');
+
+drop policy if exists "Admins can view roles" on public.admin_roles;
+drop policy if exists "Users can read own role" on public.admin_roles;
+drop policy if exists "Admins can manage roles" on public.admin_roles;
+
+create policy "Users can read own role" on public.admin_roles
+    for select using (auth.uid() = user_id);
+
+create policy "Admins can manage roles" on public.admin_roles
+    for all using (public.is_admin(auth.uid()) or auth.role() = 'service_role');
 
 -- 2. PUBLIC READ POLICIES
 create policy "Public can view active categories" on public.categories

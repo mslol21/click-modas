@@ -43,9 +43,15 @@ export default function AdminLoginPage() {
         .select("role")
         .eq("user_id", data.user.id)
         .in("role", ["admin", "super_admin"])
-        .single();
+        .maybeSingle();
 
-      if (roleError || !profile || !["admin", "super_admin"].includes(profile.role)) {
+      if (roleError) {
+        console.error("Erro ao validar permissões:", roleError);
+        await supabase.auth.signOut();
+        throw new Error("Erro ao consultar permissões no banco de dados.");
+      }
+
+      if (!profile || !["admin", "super_admin"].includes(profile.role)) {
         await supabase.auth.signOut();
         throw new Error("Esta conta não possui permissão administrativa.");
       }
