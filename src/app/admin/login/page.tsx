@@ -26,47 +26,33 @@ export default function AdminLoginPage() {
     try {
       const supabase = createClient();
 
-      if (supabase) {
-        // Authenticate via Supabase Auth
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        if (data.session) {
-          localStorage.setItem(
-            "clickmodas_admin_auth",
-            JSON.stringify({
-              userId: data.user.id,
-              email: data.user.email,
-              timestamp: Date.now(),
-            })
-          );
-          toast.success("Login efetuado com sucesso!");
-          router.push("/admin");
-          return;
-        }
+      if (!supabase) {
+        throw new Error("Autenticação indisponível. Configure o Supabase antes de acessar o painel.");
       }
 
-      // Local / Offline authentication fallback for owner demonstration
-      if (email.trim() && password.length >= 6) {
-        localStorage.setItem(
-          "clickmodas_admin_auth",
-          JSON.stringify({
-            email: email.trim(),
-            role: "super_admin",
-            timestamp: Date.now(),
-          })
-        );
-        toast.success("Acesso administrativo autorizado!");
-        router.push("/admin");
-      } else {
-        throw new Error("Credenciais inválidas. Preencha seu e-mail e uma senha de no mínimo 6 dígitos.");
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error || !data.user) {
+        throw new Error("Credenciais inválidas ou acesso indisponível.");
       }
+
+      const { data: profile, error: roleError } = await supabase
+        .from("admin_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .in("role", ["admin", "super_admin"])
+        .single();
+
+      if (roleError || !profile || !["admin", "super_admin"].includes(profile.role)) {
+        await supabase.auth.signOut();
+        throw new Error("Esta conta não possui permissão administrativa.");
+      }
+
+      toast.success("Login efetuado com sucesso!");
+      router.replace("/admin");
+      router.refresh();
     } catch (err: any) {
       console.error("Falha no login administrativo:", err);
       setErrorMessage(err.message || "Erro ao realizar login.");

@@ -96,3 +96,16 @@
 .brand-soft-gradient {
   background: linear-gradient(135deg, #FBEAF4 0%, #FFFFFF 100%);
 }
+
+/* Polimento visual responsivo da vitrine */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { overflow-x: clip; }
+  ::selection { background: #e88cb8; color: #30283b; }
+  :focus-visible { outline: 2px solid #7544a0; outline-offset: 3px; }
+}
+@layer utilities {
+  .store-card-lift { transition: transform .25s ease, box-shadow .25s ease; }
+  .store-card-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(117,68,160,.12); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .store-card-lift:hover { transform: none; } }

@@ -35,6 +35,7 @@ export function CartClient() {
   const [customerNotes, setCustomerNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [completedOrderNumber, setCompletedOrderNumber] = useState<string | null>(null);
+  const [completedWhatsAppUrl, setCompletedWhatsAppUrl] = useState<string | null>(null);
 
   if (!isInitialized) {
     return (
@@ -78,7 +79,7 @@ export function CartClient() {
             <span className="font-semibold text-brand-dark">
               {deliveryMethod === "retirada_galeria_arco_iris"
                 ? "Retirada na Galeria Arco-Íris (SP)"
-                : "Envio a combinar"}
+                : "Motoboy — frete a confirmar"}
             </span>
           </div>
           <div className="flex justify-between pt-2 border-t">
@@ -94,7 +95,7 @@ export function CartClient() {
             </Button>
           </Link>
           <a
-            href="https://wa.me/5511954686239"
+            href={completedWhatsAppUrl || "https://wa.me/5511954686239"}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1"
@@ -165,7 +166,7 @@ export function CartClient() {
       const deliveryMethodLabel =
         deliveryMethod === "retirada_galeria_arco_iris"
           ? "Retirada na Galeria Arco-Íris (São Paulo - SP)"
-          : "Envio a combinar (Correios / Transportadora)";
+          : "Entrega por motoboy (frete a confirmar)";
 
       const waUrl = buildWhatsAppLink("5511954686239", {
         orderNumber: newOrder.order_number,
@@ -180,6 +181,7 @@ export function CartClient() {
 
       // 3. Clear cart and set completed state
       clearCart();
+      setCompletedWhatsAppUrl(waUrl);
       setCompletedOrderNumber(newOrder.order_number);
       toast.success("Pedido gerado com sucesso! Abrindo o WhatsApp...");
 
@@ -308,7 +310,7 @@ export function CartClient() {
         <div className="p-4 rounded-2xl bg-brand-pinkLight/30 border border-brand-lilac/30 text-xs text-muted-foreground space-y-1">
           <p className="font-bold text-brand-dark flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-brand-purple" />
-            Compra 100% Segura e Transparente
+            Compra com atendimento direto
           </p>
           <p>
             Não cobramos nada no site. A finalização, conferência das peças e forma de pagamento (Pix / cartão) serão alinhadas diretamente no WhatsApp da Click Modas 25.
@@ -387,7 +389,7 @@ export function CartClient() {
 
               <label
                 className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
-                  deliveryMethod === "combinar_envio"
+                  deliveryMethod === "motoboy"
                     ? "border-brand-purple bg-brand-pinkLight/30 text-brand-dark"
                     : "border-input bg-card text-muted-foreground hover:bg-muted/40"
                 }`}
@@ -395,17 +397,17 @@ export function CartClient() {
                 <input
                   type="radio"
                   name="delivery"
-                  value="combinar_envio"
-                  checked={deliveryMethod === "combinar_envio"}
-                  onChange={() => setDeliveryMethod("combinar_envio")}
+                  value="motoboy"
+                  checked={deliveryMethod === "motoboy"}
+                  onChange={() => setDeliveryMethod("motoboy")}
                   className="mt-1 text-brand-purple focus:ring-brand-purple"
                 />
                 <div className="text-xs space-y-0.5">
                   <span className="font-bold text-brand-dark block flex items-center gap-1.5">
                     <Truck className="w-3.5 h-3.5 text-brand-purple" />
-                    Envio para todo o Brasil (a combinar)
+                    Entrega por motoboy
                   </span>
-                  <span>Custo e prazo cotados com a loja no WhatsApp.</span>
+                  <span>Informe sua região nas observações; valor e prazo serão confirmados no WhatsApp.</span>
                 </div>
               </label>
             </div>

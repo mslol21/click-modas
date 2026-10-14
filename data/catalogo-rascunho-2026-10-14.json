@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "status": "draft",
+  "note": "Pré-cadastro sem preço, estoque ou publicação. Imagens originais fornecidas pelo cliente devem ser enviadas ao Supabase Storage posteriormente. Conferir tabelas de medidas antes da publicação.",
+  "products": [
+    {
+      "sku": "CM25-SUN-001",
+      "name": "Sunga Infantil Azul Estampa de Morcegos",
+      "category": "Moda Praia",
+      "sizes": [
+        "2",
+        "4",
+        "6",
+        "8",
+        "10"
+      ],
+      "description": "Sunga infantil azul com estampa de morcegos em amarelo e preto. Material apresentado como leve, confortável, de secagem rápida e boa elasticidade.",
+      "image": "240729.jpg",
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240729.jpg"
+    },
+    {
+      "sku": "CM25-SUN-002",
+      "name": "Sunga Infantil Azul Estampa Divertida",
+      "category": "Moda Praia",
+      "sizes": [
+        "2",
+        "4",
+        "6",
+        "8",
+        "10"
+      ],
+      "description": "Sunga infantil azul com estampa multicolorida de elementos lúdicos. Tecido descrito como leve, confortável, de secagem rápida e boa elasticidade.",
+      "image": "240728.jpg",
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240728.jpg"
+    },
+    {
+      "sku": "CM25-CRO-001",
+      "name": "Cropped Infantil Rosa Ursinha Bike",
+      "category": "Blusas e Croppeds",
+      "sizes": [
+        "6",
+        "8",
+        "10",
+        "12",
+        "14"
+      ],
+      "description": "Cropped infantil rosa de manga curta com estampa de ursinha de bicicleta. Costas lisas. Consulte a tabela de medidas da imagem.",
+      "image": "240734.jpg",
+      "measurements": [
+        {
+          "size": "6",
+          "length_cm": 32,
+          "bust_cm": 64,
+          "sleeve_cm": 15
+        },
+        {
+          "size": "8",
+          "length_cm": 34,
+          "bust_cm": 68,
+          "sleeve_cm": 15
+        },
+        {
+          "size": "10",
+          "length_cm": 37,
+          "bust_cm": 74,
+          "sleeve_cm": 16
+        },
+        {
+          "size": "12",
+          "length_cm": 39,
+          "bust_cm": 80,
+          "sleeve_cm": 18
+        },
+        {
+          "size": "14",
+          "length_cm": 42,
+          "bust_cm": 82,
+          "sleeve_cm": 19
+        }
+      ],
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240734.jpg"
+    },
+    {
+      "sku": "CM25-CRO-002",
+      "name": "Cropped Infantil Azul Florzinha",
+      "category": "Blusas e Croppeds",
+      "sizes": [
+        "6",
+        "8",
+        "10",
+        "12",
+        "14"
+      ],
+      "description": "Cropped infantil azul sem mangas, com três flores aplicadas na parte frontal. Costas lisas. Consulte a tabela de medidas da imagem.",
+      "image": "240725.jpg",
+      "measurements": [
+        {
+          "size": "6",
+          "length_cm": 32,
+          "bust_cm": 64,
+          "sleeve_cm": 15
+        },
+        {
+          "size": "8",
+          "length_cm": 34,
+          "bust_cm": 68,
+          "sleeve_cm": 15
+        },
+        {
+          "size": "10",
+          "length_cm": 37,
+          "bust_cm": 74,
+          "sleeve_cm": 16
+        },
+        {
+          "size": "12",
+          "length_cm": 39,
+          "bust_cm": 80,
+          "sleeve_cm": 18
+        },
+        {
+          "size": "14",
+          "length_cm": 42,
+          "bust_cm": 82,
+          "sleeve_cm": 19
+        }
+      ],
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240725.jpg"
+    },
+    {
+      "sku": "CM25-BOD-001",
+      "name": "Body Infantil Preto Estampa Halloween Rosa",
+      "category": "Bodies",
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
+      "description": "Body infantil preto sem mangas com estampa de esqueleto rosa e detalhes de Halloween. Tabela de medidas presente na imagem.",
+      "image": "240739.jpg",
+      "measurements": [
+        {
+          "size": "P",
+          "age": "2/4 anos",
+          "length_cm": 46,
+          "bust_cm": 48
+        },
+        {
+          "size": "M",
+          "age": "5/6 anos",
+          "length_cm": 48,
+          "bust_cm": 52
+        },
+        {
+          "size": "G",
+          "age": "7/8 anos",
+          "length_cm": 52,
+          "bust_cm": 56
+        },
+        {
+          "size": "GG",
+          "age": "10/12 anos",
+          "length_cm": 55,
+          "bust_cm": 57
+        }
+      ],
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240739.jpg"
+    },
+    {
+      "sku": "CM25-SUN-003",
+      "name": "Sunga Infantil Cinza Estampa Dinossauros",
+      "category": "Moda Praia",
+      "sizes": [
+        "2",
+        "4",
+        "6",
+        "8",
+        "10"
+      ],
+      "description": "Sunga infantil cinza-clara com estampa de dinossauros em tons de azul, verde e amarelo. Tecido apresentado como leve, confortável e de secagem rápida.",
+      "image": "240732.jpg",
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240732.jpg"
+    },
+    {
+      "sku": "CM25-CON-001",
+      "name": "Conjunto Infantil Rosa Ursinha",
+      "category": "Conjuntos",
+      "sizes": [
+        "2",
+        "4",
+        "6",
+        "8",
+        "10",
+        "12"
+      ],
+      "description": "Conjunto infantil rosa composto por cropped de manga curta com estampa de ursinha de bicicleta e short rosa estampado com corações, bolsos e cinto.",
+      "image": "240736.jpg",
+      "price": null,
+      "stock": null,
+      "is_published": false,
+      "image_original_filename": "240736.jpg"
+    }
+  ]
+}

@@ -39,7 +39,7 @@ export function Header() {
         </a>
       </div>
 
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      <div className="container mx-auto px-3 sm:px-5 min-h-20 flex items-center justify-between gap-2 lg:gap-4">
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 lg:hidden">
           <button
@@ -59,23 +59,13 @@ export function Header() {
           </button>
         </div>
 
-        {/* Brand Logo */}
-        <Link href="/" className="flex flex-col items-center sm:items-start group">
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold text-2xl sm:text-3xl tracking-tight text-brand-purple group-hover:opacity-90 transition-opacity">
-              CLICK MODAS
-            </span>
-            <span className="bg-brand-pink text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-              25
-            </span>
-          </div>
-          <span className="text-[10px] tracking-widest text-muted-foreground uppercase font-medium">
-            Moda Infantil • 2 ao 16
-          </span>
+        {/* Identidade visual da Click Modas 25 */}
+        <Link href="/" className="flex shrink-0 items-center rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-purple" aria-label="Click Modas 25 — página inicial">
+          <img src="/click-modas-logo.svg" alt="Click Modas 25" width="180" height="60" className="h-12 w-auto max-w-[145px] object-contain sm:h-14 sm:max-w-[180px]" />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium">
+        <nav className="hidden xl:flex items-center gap-4 text-sm font-medium">
           <Link href="/" className="text-brand-dark hover:text-brand-purple transition-colors">
             Início
           </Link>
@@ -100,7 +90,7 @@ export function Header() {
         </nav>
 
         {/* Desktop Search Bar */}
-        <div className="hidden md:flex items-center max-w-xs w-full">
+        <div className="hidden xl:flex items-center max-w-[220px] w-full">
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <input
               type="text"
