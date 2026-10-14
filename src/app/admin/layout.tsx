@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLayout({
   children,
@@ -21,18 +22,34 @@ export default function AdminLayout({
       return;
     }
 
-    // Client-side authentication check for Admin
-    if (typeof window !== "undefined") {
-      const auth =
-        localStorage.getItem("clickmodas_admin_auth") ||
-        sessionStorage.getItem("clickmodas_admin_auth");
-
-      if (!auth) {
-        router.push("/admin/login");
-      } else {
-        setIsAuthChecking(false);
+    let active = true;
+    const verify = async () => {
+      const supabase = createClient();
+      if (!supabase) {
+        router.replace("/admin/login");
+        return;
       }
-    }
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        if (active) router.replace("/admin/login");
+        return;
+      }
+      const { data: role, error: roleError } = await supabase
+        .from("admin_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .in("role", ["admin", "super_admin"])
+        .limit(1)
+        .maybeSingle();
+      if (roleError || !role) {
+        if (active) router.replace("/admin/login");
+        return;
+      }
+      if (active) setIsAuthChecking(false);
+    };
+    setIsAuthChecking(true);
+    void verify();
+    return () => { active = false; };
   }, [pathname, isLoginPage, router]);
 
   if (isLoginPage) {
