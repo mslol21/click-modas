@@ -1,4 +1,3 @@
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   initialCategories,
   initialBanners,
@@ -459,19 +458,17 @@ export async function getAdminStats() {
 }
 
 export async function getAllProductsAdmin(): Promise<Product[]> {
-  const supabase = createServerSupabaseClient();
   if (supabase) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
-    const { data: adminRole } = await supabase.from("admin_roles").select("role").eq("user_id", user.id).in("role", ["admin", "super_admin", "operator"]).maybeSingle();
-    if (!adminRole) return [];
-    const { data, error } = await supabase.from("products").select("*, variants:product_variants(*), images:product_images(*), category:categories(*)").order("created_at", { ascending: false });
-    if (error) throw new Error("Não foi possível carregar os produtos do Supabase: " + error.message);
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, variants:product_variants(*), images:product_images(*), category:categories(*)")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error("Não foi possível carregar os produtos: " + error.message);
     return (data ?? []) as Product[];
   }
   return productsState.map((p) => ({
     ...p,
-    category: categoriesState.find((c) => c.id === p.category_id),
+    category: categoriesState.find((category) => category.id === p.category_id),
   }));
 }
 
