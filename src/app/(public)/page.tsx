@@ -25,9 +25,9 @@ export default async function HomePage() {
   const latestProducts = await getProducts({ sort: "newest" });
 
   const primaryBanner = banners[0] || {
-    title: "Coleção Primavera Encantada",
-    subtitle: "Moda infantil delicada e confortável do tamanho 2 ao 16 com o melhor preço de São Paulo.",
-    image_url: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=1600&auto=format&fit=crop&q=80",
+    title: "Click Modas 25 — Moda Infantil",
+    subtitle: "Conheça nossas peças disponíveis e fale diretamente com nossa equipe.",
+    image_url: "/click-modas-logo.svg",
     link_url: "/catalogo",
     button_text: "Explorar Catálogo",
   };
@@ -41,7 +41,7 @@ export default async function HomePage() {
             <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white shadow-sm border text-brand-purple text-xs font-semibold">
                 <Sparkles className="w-4 h-4 text-brand-pink" />
-                <span>Nova Coleção Click Modas 25</span>
+                <span>Click Modas 25</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-dark leading-[1.15]">
@@ -152,7 +152,7 @@ export default async function HomePage() {
                 <Image
                   src={
                     cat.image_url ||
-                    "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600&auto=format&fit=crop&q=80"
+                    "/click-modas-logo.svg"
                   }
                   alt={cat.name}
                   fill
@@ -180,7 +180,7 @@ export default async function HomePage() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-purple uppercase tracking-wider mb-1">
               <Sparkles className="w-3.5 h-3.5 text-brand-pink" />
-              <span>Mais Amados</span>
+              <span>Seleção da Loja</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-dark">
               Produtos em Destaque
@@ -210,7 +210,7 @@ export default async function HomePage() {
                 Recém Chegados
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-dark">
-                Lançamentos da Estação
+                Produtos Recentes
               </h2>
             </div>
             <Link
