@@ -7,7 +7,15 @@ import {
   initialInstitutional,
   sampleOrders,
 } from "./mock-data";
-import { Product, Category, Banner, Order, OrderStatus } from "@/types/database";
+import {
+  Product,
+  Category,
+  Banner,
+  Order,
+  OrderStatus,
+  StoreSettingsGeneral,
+  SizeGuideItem,
+} from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
 
 // Supabase client instance if configured
@@ -227,7 +235,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   };
 }
 
-export async function getStoreSettings() {
+export async function getStoreSettings(): Promise<StoreSettingsGeneral> {
   if (supabase) {
     try {
       const { data, error } = await supabase
@@ -237,14 +245,14 @@ export async function getStoreSettings() {
         .single();
 
       if (!error && data?.value) {
-        return data.value;
+        return data.value as StoreSettingsGeneral;
       }
     } catch {}
   }
   return settingsState;
 }
 
-export async function getSizeGuide() {
+export async function getSizeGuide(): Promise<SizeGuideItem[]> {
   if (supabase) {
     try {
       const { data, error } = await supabase
@@ -254,14 +262,14 @@ export async function getSizeGuide() {
         .single();
 
       if (!error && data?.value) {
-        return data.value;
+        return data.value as SizeGuideItem[];
       }
     } catch {}
   }
   return initialSizeGuide;
 }
 
-export async function getInstitutional() {
+export async function getInstitutional(): Promise<typeof initialInstitutional> {
   if (supabase) {
     try {
       const { data, error } = await supabase
@@ -271,7 +279,7 @@ export async function getInstitutional() {
         .single();
 
       if (!error && data?.value) {
-        return data.value;
+        return data.value as typeof initialInstitutional;
       }
     } catch {}
   }
