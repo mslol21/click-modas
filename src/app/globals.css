@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 266 19% 19%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 266 19% 19%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 266 19% 19%;
+
+    --primary: 272 40% 45%; /* #7544A0 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 318 64% 95%; /* #FBEAF4 */
+    --secondary-foreground: 272 40% 45%;
+
+    --muted: 270 20% 96%;
+    --muted-foreground: 266 12% 45%;
+
+    --accent: 272 47% 64%; /* #A879CF */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 270 20% 90%;
+    --input: 270 20% 90%;
+    --ring: 272 40% 45%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 266 25% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 266 22% 14%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 266 22% 14%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 272 50% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 266 20% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 266 20% 20%;
+    --muted-foreground: 270 15% 65%;
+
+    --accent: 272 47% 64%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 266 20% 22%;
+    --input: 266 20% 22%;
+    --ring: 272 47% 64%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Redução de animações se o usuário preferir */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Suavidade para cards e badges com tema infantil delicado */
+.brand-gradient {
+  background: linear-gradient(135deg, #7544A0 0%, #A879CF 100%);
+}
+
+.brand-soft-gradient {
+  background: linear-gradient(135deg, #FBEAF4 0%, #FFFFFF 100%);
+}
