@@ -8,6 +8,18 @@ import {
   sampleOrders,
 } from "./mock-data";
 import { Product, Category, Banner, Order, OrderStatus } from "@/types/database";
+import { createClient } from "@supabase/supabase-js";
+
+// Supabase client instance if configured
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey, {
+        auth: { persistSession: false },
+      })
+    : null;
 
 // In-memory state for development and fallback
 let categoriesState = [...initialCategories];
@@ -17,10 +29,40 @@ let ordersState = [...sampleOrders];
 let settingsState = { ...initialStoreSettings };
 
 export async function getCategories(): Promise<Category[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        return data as Category[];
+      }
+    } catch {
+      // Fallback to memory
+    }
+  }
   return categoriesState.filter((c) => c.is_active);
 }
 
 export async function getBanners(): Promise<Banner[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("banners")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        return data as Banner[];
+      }
+    } catch {
+      // Fallback to memory
+    }
+  }
   return bannersState.filter((b) => b.is_active).sort((a, b) => a.sort_order - b.sort_order);
 }
 
@@ -35,6 +77,72 @@ export interface ProductFilters {
 }
 
 export async function getProducts(filters: ProductFilters = {}): Promise<Product[]> {
+  if (supabase) {
+    try {
+      let query = supabase
+        .from("products")
+        .select("*, category:categories(*), variants:product_variants(*), images:product_images(*)")
+        .eq("is_published", true);
+
+      if (filters.featured !== undefined) {
+        query = query.eq("is_featured", filters.featured);
+      }
+
+      const { data, error } = await query;
+      if (!error && data && data.length > 0) {
+        let list = data as Product[];
+
+        if (filters.categorySlug) {
+          list = list.filter((p) => p.category?.slug === filters.categorySlug);
+        }
+
+        if (filters.search) {
+          const term = filters.search.toLowerCase().trim();
+          list = list.filter(
+            (p) =>
+              p.name.toLowerCase().includes(term) ||
+              (p.sku_base && p.sku_base.toLowerCase().includes(term)) ||
+              (p.description && p.description.toLowerCase().includes(term)) ||
+              p.variants?.some((v) => v.sku.toLowerCase().includes(term))
+          );
+        }
+
+        if (filters.size) {
+          list = list.filter((p) => p.variants?.some((v) => v.size === filters.size && v.stock > 0));
+        }
+
+        if (filters.minPrice !== undefined) {
+          list = list.filter((p) => (p.promotional_price ?? p.price) >= filters.minPrice!);
+        }
+
+        if (filters.maxPrice !== undefined) {
+          list = list.filter((p) => (p.promotional_price ?? p.price) <= filters.maxPrice!);
+        }
+
+        // Sorting
+        switch (filters.sort) {
+          case "price-asc":
+            list.sort((a, b) => (a.promotional_price ?? a.price) - (b.promotional_price ?? b.price));
+            break;
+          case "price-desc":
+            list.sort((a, b) => (b.promotional_price ?? b.price) - (a.promotional_price ?? a.price));
+            break;
+          case "name":
+            list.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          case "newest":
+          default:
+            list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            break;
+        }
+
+        return list;
+      }
+    } catch {
+      // Fallback to memory
+    }
+  }
+
   let list = productsState.filter((p) => p.is_published);
 
   if (filters.categorySlug) {
@@ -71,7 +179,6 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
     list = list.filter((p) => (p.promotional_price ?? p.price) <= filters.maxPrice!);
   }
 
-  // Sorting
   switch (filters.sort) {
     case "price-asc":
       list.sort((a, b) => (a.promotional_price ?? a.price) - (b.promotional_price ?? b.price));
@@ -88,7 +195,6 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
       break;
   }
 
-  // Populate category info
   return list.map((p) => ({
     ...p,
     category: categoriesState.find((c) => c.id === p.category_id),
@@ -96,6 +202,22 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, category:categories(*), variants:product_variants(*), images:product_images(*)")
+        .eq("slug", slug)
+        .single();
+
+      if (!error && data) {
+        return data as Product;
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
   const product = productsState.find((p) => p.slug === slug);
   if (!product) return null;
 
@@ -106,18 +228,56 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 export async function getStoreSettings() {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("store_settings")
+        .select("value")
+        .eq("key", "general")
+        .single();
+
+      if (!error && data?.value) {
+        return data.value;
+      }
+    } catch {}
+  }
   return settingsState;
 }
 
 export async function getSizeGuide() {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("store_settings")
+        .select("value")
+        .eq("key", "size_guide")
+        .single();
+
+      if (!error && data?.value) {
+        return data.value;
+      }
+    } catch {}
+  }
   return initialSizeGuide;
 }
 
 export async function getInstitutional() {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from("store_settings")
+        .select("value")
+        .eq("key", "institutional")
+        .single();
+
+      if (!error && data?.value) {
+        return data.value;
+      }
+    } catch {}
+  }
   return initialInstitutional;
 }
 
-// Order Intention Creation
 export interface CreateOrderItemInput {
   productId: string;
   variantId: string;
@@ -133,7 +293,6 @@ export interface CreateOrderInput {
 }
 
 export async function createOrderIntention(input: CreateOrderInput) {
-  // 1. Re-validate each item and current prices/stock
   const orderItems = [];
   let subtotal = 0;
 
@@ -174,7 +333,6 @@ export async function createOrderIntention(input: CreateOrderInput) {
     });
   }
 
-  // 2. Generate unique order number CMD-YYYYMMDD-XXXX
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const randomSuffix = Math.floor(1000 + Math.random() * 9000);
   const orderNumber = `CMD-${today}-${randomSuffix}`;
@@ -203,25 +361,74 @@ export async function createOrderIntention(input: CreateOrderInput) {
 
   ordersState.unshift(newOrder);
 
+  // If Supabase is connected, also insert into orders and order_items
+  if (supabase) {
+    try {
+      const { data: dbOrder } = await supabase
+        .from("orders")
+        .insert({
+          order_number: orderNumber,
+          customer_name: input.customerName,
+          customer_phone: input.customerPhone,
+          delivery_method: input.deliveryMethod,
+          subtotal,
+          total: subtotal,
+          status: "pedido_iniciado",
+          customer_notes: input.customerNotes || null,
+          whatsapp_message_sent: true,
+        })
+        .select()
+        .single();
+
+      if (dbOrder) {
+        await supabase.from("order_items").insert(
+          orderItems.map((item) => ({
+            order_id: dbOrder.id,
+            product_id: item.product_id,
+            variant_id: item.variant_id,
+            product_name: item.product_name,
+            variant_size: item.variant_size,
+            variant_color: item.variant_color,
+            sku: item.sku,
+            unit_price: item.unit_price,
+            quantity: item.quantity,
+            total_price: item.total_price,
+          }))
+        );
+      }
+    } catch {
+      // Safe fallback
+    }
+  }
+
   return newOrder;
 }
 
-// Admin Operations
 export async function getAdminStats() {
   const totalOrders = ordersState.length;
   const initiatedOrders = ordersState.filter((o) => o.status === "pedido_iniciado").length;
   const confirmedOrders = ordersState.filter(
-    (o) => o.status === "confirmado" || o.status === "pago" || o.status === "em_separacao" || o.status === "enviado" || o.status === "entregue"
+    (o) =>
+      o.status === "confirmado" ||
+      o.status === "pago" ||
+      o.status === "em_separacao" ||
+      o.status === "enviado" ||
+      o.status === "entregue"
   ).length;
   const completedOrders = ordersState.filter((o) => o.status === "entregue").length;
 
   const confirmedRevenue = ordersState
-    .filter((o) => o.status === "pago" || o.status === "entregue" || o.status === "em_separacao" || o.status === "enviado")
+    .filter(
+      (o) =>
+        o.status === "pago" ||
+        o.status === "entregue" ||
+        o.status === "em_separacao" ||
+        o.status === "enviado"
+    )
     .reduce((sum, o) => sum + o.total, 0);
 
   const activeProducts = productsState.filter((p) => p.is_published).length;
-  
-  // Low stock products (variant stock <= 3)
+
   const lowStockVariants = productsState.flatMap((p) =>
     (p.variants || [])
       .filter((v) => v.stock <= 5)
@@ -252,7 +459,12 @@ export async function getAllOrdersAdmin(): Promise<Order[]> {
   return [...ordersState];
 }
 
-export async function updateOrderStatus(orderId: string, status: OrderStatus, internalNotes?: string, deliveryFee?: number) {
+export async function updateOrderStatus(
+  orderId: string,
+  status: OrderStatus,
+  internalNotes?: string,
+  deliveryFee?: number
+) {
   const order = ordersState.find((o) => o.id === orderId);
   if (!order) throw new Error("Pedido não encontrado");
 
@@ -264,13 +476,11 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus, in
   }
   order.updated_at = new Date().toISOString();
 
-  // If order is confirmed or paid, reserve/adjust stock safely
   if (status === "confirmado" || status === "pago") {
     for (const item of order.items || []) {
       for (const prod of productsState) {
         const variant = prod.variants?.find((v) => v.id === item.variant_id);
         if (variant && variant.stock >= item.quantity) {
-          // decrement variant stock safely
           variant.stock -= item.quantity;
         }
       }
