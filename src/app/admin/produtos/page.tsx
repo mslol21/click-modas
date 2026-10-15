@@ -1,6 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
-import { getAllProductsAdmin, getCategories } from "@/lib/data";
+import { getAllProductsAdmin } from "@/lib/admin-data";
+import { getCategories } from "@/lib/data";
 import { ProductsListClient } from "./products-list-client";
 
 export const metadata: Metadata = {
