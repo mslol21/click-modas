@@ -34,90 +34,16 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-12 sm:gap-16 pb-16">
-      {/* 1. HERO BANNER */}
-      <section className="relative overflow-hidden bg-brand-pinkLight/40 py-8 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white shadow-sm border text-brand-purple text-xs font-semibold">
-                <Sparkles className="w-4 h-4 text-brand-pink" />
-                <span>Click Modas 25</span>
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-dark leading-[1.15]">
-                {primaryBanner.title}
-              </h1>
-
-              <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                {primaryBanner.subtitle}
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
-                <Link href={primaryBanner.link_url || "/catalogo"}>
-                  <Button size="lg" className="rounded-full shadow-md w-full sm:w-auto">
-                    {primaryBanner.button_text || "Ver Catálogo Completo"}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-
-                <a
-                  href="https://wa.me/5511954686239"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto"
-                >
-                  <Button variant="outline" size="lg" className="rounded-full w-full sm:w-auto gap-2">
-                    <Phone className="w-4 h-4 text-emerald-600" />
-                    <span>Falar no WhatsApp</span>
-                  </Button>
-                </a>
-              </div>
-
-              {/* Badges info */}
-              <div className="grid grid-cols-3 gap-2 pt-4 border-t border-brand-lilac/20 text-xs text-muted-foreground text-center">
-                <div>
-                  <strong className="block text-sm text-brand-dark">2 ao 16</strong>
-                  Tamanhos infantis
-                </div>
-                <div>
-                  <strong className="block text-sm text-brand-dark">Pronta Entrega</strong>
-                  São Paulo & Envio
-                </div>
-                <div>
-                  <strong className="block text-sm text-brand-dark">Atendimento</strong>
-                  Direto via WhatsApp
-                </div>
-              </div>
-            </div>
-
-            {/* Hero Image */}
-            <div className="lg:col-span-6 relative">
-              <div className="relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                <Image
-                  src={primaryBanner.image_url}
-                  alt={primaryBanner.title}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg border flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-semibold text-brand-purple uppercase tracking-wider">
-                      Referência em São Paulo
-                    </p>
-                    <p className="text-sm font-bold text-brand-dark">
-                      Galeria Arco-Íris
-                    </p>
-                  </div>
-                  <span className="text-xs bg-brand-purple text-white px-3 py-1.5 rounded-full font-medium">
-                    Atendimento Online
-                  </span>
-                </div>
-              </div>
-            </div>
+      {/* Banner principal: imagem integral gerenciada pelo painel, sem sobreposição de texto */}
+      <section className="w-full bg-[#f9eafa]" aria-label="Destaque Click Modas 25">
+        <Link href={primaryBanner.link_url || "/catalogo"} className="block w-full focus-visible:outline focus-visible:outline-4 focus-visible:outline-brand-purple" aria-label={primaryBanner.title + " — Ver coleção"}>
+          <div className="relative w-full aspect-[2/1] sm:aspect-[2.7/1] lg:aspect-[3/1] overflow-hidden">
+            <Image src={primaryBanner.image_url} alt={primaryBanner.title} fill priority sizes="100vw" className="object-contain" />
           </div>
+        </Link>
+        <div className="container mx-auto px-4 py-4 flex flex-wrap justify-center gap-3 sm:gap-5">
+          <Link href="/catalogo"><Button className="rounded-full">Ver Coleção <ArrowRight className="ml-2 h-4 w-4" /></Button></Link>
+          <a href="https://wa.me/5511954686239" target="_blank" rel="noopener noreferrer"><Button variant="outline" className="rounded-full"><Phone className="mr-2 h-4 w-4" />Falar no WhatsApp</Button></a>
         </div>
       </section>
 
