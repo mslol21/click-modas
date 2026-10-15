@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { getAdminStats } from "@/lib/data";
+import { getAdminStats } from "@/lib/admin-data";
 import { DashboardClient } from "./dashboard-client";
 
 export const metadata: Metadata = {
