@@ -1,7 +1,8 @@
 import React from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllProductsAdmin, getCategories } from "@/lib/data";
+import { getAllProductsAdmin } from "@/lib/admin-data";
+import { getCategories } from "@/lib/data";
 import { EditProductClient } from "./edit-product-client";
 
 export const metadata: Metadata = {
