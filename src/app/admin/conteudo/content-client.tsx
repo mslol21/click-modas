@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Sliders, Plus, Trash2, CheckCircle2, Image as ImageIcon, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { adminDb } from "@/lib/product-admin";
 
 interface ContentClientProps {
   initialBanners: Banner[];
@@ -33,6 +34,17 @@ export function ContentClient({
   const [newSubtitle, setNewSubtitle] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("/catalogo");
+  const [isUploading, setIsUploading] = useState(false);
+  const [isBannerSaving, setIsBannerSaving] = useState(false);
+  const handleBannerUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file=event.target.files?.[0]; if(!file)return;
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)){toast.error("Use JPG, PNG ou WebP.");return;}
+    if(file.size>5*1024*1024){toast.error("Arquivo deve ter no máximo 5 MB.");return;}
+    setIsUploading(true);
+    try { const db=await adminDb(); const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg"; const key=`home/${crypto.randomUUID()}.${ext}`; const {error}=await db.storage.from("banners").upload(key,file,{contentType:file.type,upsert:false});if(error)throw error;const url=db.storage.from("banners").getPublicUrl(key).data.publicUrl;setNewImageUrl(url);toast.success("Imagem enviada ao Supabase."); }
+    catch(error){toast.error(error instanceof Error?error.message:"Falha no envio.");}
+    finally{setIsUploading(false);event.target.value="";}
+  };
 
   // Institutional text states
   const [about, setAbout] = useState(initialInstitutional.about);
@@ -41,56 +53,38 @@ export function ContentClient({
 
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleAddBanner = (e: React.FormEvent) => {
+  const handleAddBanner = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newImageUrl.trim()) {
-      toast.error("Preencha ao menos o título e a URL da foto do banner.");
-      return;
-    }
-
-    const created: Banner = {
-      id: `banner-${Date.now()}`,
-      title: newTitle.trim(),
-      subtitle: newSubtitle.trim() || null,
-      image_url: newImageUrl.trim(),
-      link_url: newLinkUrl.trim() || "/catalogo",
-      button_text: "Ver Coleção",
-      sort_order: banners.length + 1,
-      is_active: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    setBanners([...banners, created]);
-    setNewTitle("");
-    setNewSubtitle("");
-    setNewImageUrl("");
-    toast.success("Novo banner cadastrado!");
+    if(!newTitle.trim()||!newImageUrl.trim()){toast.error("Informe título e imagem.");return;}
+    if(isUploading)return;
+    setIsBannerSaving(true);
+    try {
+      const db=await adminDb();
+      const {data,error}=await db.from("banners").insert({title:newTitle.trim(),subtitle:newSubtitle.trim()||null,image_url:newImageUrl.trim(),link_url:newLinkUrl.trim()||"/catalogo",button_text:"Ver Coleção",sort_order:banners.length+1,is_active:true}).select("*").single();
+      if(error)throw error;
+      setBanners(prev=>[...prev,data as Banner]);setNewTitle("");setNewSubtitle("");setNewImageUrl("");
+      toast.success("Banner salvo no Supabase.");
+    } catch(error){toast.error(error instanceof Error?error.message:"Falha ao cadastrar banner.");}
+    finally{setIsBannerSaving(false);}
   };
 
-  const handleRemoveBanner = (bannerId: string) => {
-    if (confirm("Deseja realmente remover este banner?")) {
-      setBanners(banners.filter((b) => b.id !== bannerId));
-      toast.success("Banner removido.");
-    }
+  const handleRemoveBanner = async (bannerId: string) => {
+    if(!window.confirm("Excluir definitivamente este banner?"))return;
+    try {const db=await adminDb();const {data,error}=await db.from("banners").delete().eq("id",bannerId).select("id");if(error)throw error;if(!data?.length)throw new Error("Exclusão não autorizada.");setBanners(prev=>prev.filter(b=>b.id!==bannerId));toast.success("Banner excluído do Supabase.");}
+    catch(error){toast.error(error instanceof Error?error.message:"Falha ao excluir.");}
   };
 
-  const handleToggleBanner = (bannerId: string) => {
-    setBanners(
-      banners.map((b) =>
-        b.id === bannerId ? { ...b, is_active: !b.is_active } : b
-      )
-    );
-    toast.info("Visibilidade do banner alterada.");
+  const handleToggleBanner = async (bannerId: string) => {
+    const current=banners.find(b=>b.id===bannerId);if(!current)return;
+    try {const db=await adminDb();const {data,error}=await db.from("banners").update({is_active:!current.is_active}).eq("id",bannerId).select("*").single();if(error)throw error;setBanners(prev=>prev.map(b=>b.id===bannerId?data as Banner:b));toast.success("Visibilidade atualizada no Supabase.");}
+    catch(error){toast.error(error instanceof Error?error.message:"Falha ao atualizar.");}
   };
 
-  const handleSaveInstitutional = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      toast.success("Textos institucionais atualizados com sucesso!");
-    }, 500);
+  const handleSaveInstitutional = async (e: React.FormEvent) => {
+    e.preventDefault();setIsSaving(true);
+    try {const db=await adminDb();const value={...initialInstitutional,about,delivery,exchange};const {error}=await db.from("store_settings").upsert({key:"institutional",value},{onConflict:"key"});if(error)throw error;toast.success("Textos institucionais salvos no Supabase.");}
+    catch(error){toast.error(error instanceof Error?error.message:"Falha ao salvar textos.");}
+    finally{setIsSaving(false);}
   };
 
   return (
@@ -155,11 +149,16 @@ export function ContentClient({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">URL da Imagem de Destaque *</Label>
+                    <Label className="text-xs font-semibold">Imagem de Destaque *</Label>
+                    <label className="mb-2 block cursor-pointer rounded-xl border-2 border-dashed border-brand-purple/40 p-3 text-center text-xs font-semibold hover:bg-muted/40">
+                      {isUploading ? "Enviando imagem..." : "Selecionar imagem do celular ou computador"}
+                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleBannerUpload} disabled={isUploading||isBannerSaving} className="sr-only" />
+                    </label>
+                    <p className="text-[11px] text-muted-foreground mb-2">JPG, PNG ou WebP até 5 MB. Você também pode informar uma URL.</p>
                     <Input
                       type="url"
                       required
-                      placeholder="https://images.unsplash.com/photo-..."
+                      placeholder="URL da imagem (preenchida automaticamente após o envio)"
                       value={newImageUrl}
                       onChange={(e) => setNewImageUrl(e.target.value)}
                       className="rounded-full"
@@ -177,9 +176,9 @@ export function ContentClient({
                   </div>
                 </div>
 
-                <Button type="submit" className="rounded-full gap-2 text-xs font-bold">
+                <Button type="submit" disabled={isUploading||isBannerSaving} className="rounded-full gap-2 text-xs font-bold">
                   <Plus className="w-4 h-4" />
-                  <span>Cadastrar Banner</span>
+                  <span>{isBannerSaving ? "Salvando..." : "Cadastrar Banner"}</span>
                 </Button>
               </form>
             </CardContent>
