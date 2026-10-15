@@ -8,6 +8,7 @@ import {
   SizeGuideItem,
 } from "@/types/database";
 import { createClient } from "@supabase/supabase-js";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 // Supabase client instance if configured
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -113,9 +114,29 @@ export async function createOrderIntention(_input: CreateOrderInput): Promise<Or
 
 export async function getAdminStats() { const [orders,products]=await Promise.all([getAllOrdersAdmin(),getAllProductsAdmin()]); const confirmed=["confirmado","pago","em_separacao","enviado","entregue"]; const paid=["pago","em_separacao","enviado","entregue"]; const lowStockVariants=products.flatMap(p=>(p.variants??[]).filter(v=>v.stock<=5).map(v=>({...v,productName:p.name}))); return {totalOrders:orders.length,initiatedOrders:orders.filter(o=>o.status==="pedido_iniciado").length,confirmedOrders:orders.filter(o=>confirmed.includes(o.status)).length,completedOrders:orders.filter(o=>o.status==="entregue").length,confirmedRevenue:orders.filter(o=>paid.includes(o.status)).reduce((sum,o)=>sum+Number(o.total),0),activeProducts:products.filter(p=>p.is_published).length,lowStockCount:lowStockVariants.length,lowStockVariants,recentOrders:orders.slice(0,5)}; }
 
-export async function getAllProductsAdmin():Promise<Product[]> { const {data,error}=await db().from("products").select("*, variants:product_variants(*), images:product_images(*), category:categories(*)").order("created_at",{ascending:false}); if(error) throw new Error(error.message); return (data??[]) as Product[]; }
+export async function getAllProductsAdmin():Promise<Product[]> {
+  const client=createServerSupabaseClient();
+  if(!client) throw new Error("Supabase não configurado.");
+  const {data:{user},error:authError}=await client.auth.getUser();
+  if(authError||!user) throw new Error("Sessão de administrador não encontrada.");
+  const {data:role,error:roleError}=await client.from("admin_roles").select("user_id").eq("user_id",user.id).maybeSingle();
+  if(roleError||!role) throw new Error("Acesso restrito a administradores.");
+  const {data,error}=await client.from("products").select("*, variants:product_variants(*), images:product_images(*), category:categories(*)").order("created_at",{ascending:false});
+  if(error) throw new Error("Falha ao consultar produtos reais: "+error.message);
+  return (data??[]) as Product[];
+}
 
-export async function getAllOrdersAdmin():Promise<Order[]> { const {data,error}=await db().from("orders").select("*,items:order_items(*)").order("created_at",{ascending:false}); if(error) throw new Error(error.message); return (data??[]) as Order[]; }
+export async function getAllOrdersAdmin():Promise<Order[]> {
+  const client=createServerSupabaseClient();
+  if(!client) throw new Error("Supabase não configurado.");
+  const {data:{user},error:authError}=await client.auth.getUser();
+  if(authError||!user) throw new Error("Sessão de administrador não encontrada.");
+  const {data:role,error:roleError}=await client.from("admin_roles").select("user_id").eq("user_id",user.id).maybeSingle();
+  if(roleError||!role) throw new Error("Acesso restrito a administradores.");
+  const {data,error}=await client.from("orders").select("*,items:order_items(*)").order("created_at",{ascending:false});
+  if(error) throw new Error(error.message);
+  return (data??[]) as Order[];
+}
 
 export async function updateOrderStatus(orderId:string,status:OrderStatus,internalNotes?:string,deliveryFee?:number) { const client=await import("@/lib/supabase/client"); const auth=client.createClient(); if(!auth) throw new Error("Supabase não configurado"); const {data:session}=await auth.auth.getUser(); if(!session.user) throw new Error("Faça login como administrador"); const {data:order,error:fetchError}=await auth.from("orders").select("*").eq("id",orderId).single(); if(fetchError) throw new Error(fetchError.message); if(["confirmado","pago"].includes(status) && !["confirmado","pago","em_separacao","enviado","entregue"].includes(order.status)) throw new Error("Confirmação bloqueada até ativar baixa transacional do estoque."); const patch:Record<string,unknown>={status}; if(internalNotes!==undefined)patch.internal_notes=internalNotes; if(deliveryFee!==undefined){if(deliveryFee<0)throw new Error("Frete inválido");patch.delivery_fee=deliveryFee;patch.total=Number(order.subtotal)+deliveryFee;} const {data,error}=await auth.from("orders").update(patch).eq("id",orderId).select().single(); if(error)throw new Error(error.message);return data as Order; }
 
