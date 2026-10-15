@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowLeft, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { saveProduct, uploadProductPhoto } from "@/lib/product-admin";
 
 interface EditProductClientProps {
   product: Product;
@@ -33,11 +34,7 @@ export function EditProductClient({ product, categories }: EditProductClientProp
 
   // Photos
   const [imageUrl, setImageUrl] = useState("");
-  const [imageList, setImageList] = useState<string[]>(
-    product.images?.map((i) => i.image_url) || [
-      "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=800&auto=format&fit=crop&q=80",
-    ]
-  );
+  const [imageList, setImageList] = useState<string[]>(product.images?.map(i => i.image_url) ?? []);
 
   // Variants
   const [variants, setVariants] = useState(
@@ -51,6 +48,15 @@ export function EditProductClient({ product, categories }: EditProductClientProp
   );
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files=Array.from(event.target.files??[]);
+    if(!files.length)return;
+    setIsUploading(true);
+    try { const urls=await Promise.all(files.map(uploadProductPhoto)); setImageList(prev=>[...prev,...urls]); toast.success(`${urls.length} foto(s) enviada(s) ao Supabase.`); }
+    catch(error){toast.error(error instanceof Error?error.message:"Falha no upload.");}
+    finally{setIsUploading(false);event.target.value="";}
+  };
 
   const handleAddImage = () => {
     if (imageUrl.trim()) {
@@ -91,15 +97,17 @@ export function EditProductClient({ product, categories }: EditProductClientProp
     setVariants(updated);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(isUploading){toast.error("Aguarde o envio das fotos.");return;}
     setIsSaving(true);
-
-    setTimeout(() => {
-      setIsSaving(false);
-      toast.success(`Peça "${name}" atualizada com sucesso!`);
+    try {
+      await saveProduct({name,category_id:categoryId||null,description:description||null,price:Number(price),promotional_price:promotionalPrice?Number(promotionalPrice):null,sku_base:skuBase||null,is_published:isPublished,is_featured:isFeatured}, variants, imageList, product.id);
+      toast.success("Produto salvo no Supabase.");
       router.push("/admin/produtos");
-    }, 600);
+      router.refresh();
+    } catch(error){toast.error(error instanceof Error?error.message:"Não foi possível salvar.");}
+    finally{setIsSaving(false);}
   };
 
   return (
@@ -131,7 +139,7 @@ export function EditProductClient({ product, categories }: EditProductClientProp
           </Link>
           <Button
             type="submit"
-            disabled={isSaving}
+            disabled={isSaving || isUploading}
             className="rounded-full gap-2 text-xs shadow-md font-bold px-6"
           >
             <CheckCircle2 className="w-4 h-4" />
@@ -360,6 +368,10 @@ export function EditProductClient({ product, categories }: EditProductClientProp
               <CardTitle className="text-sm font-bold">Fotos do Produto</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <label className="block cursor-pointer rounded-xl border-2 border-dashed border-brand-purple/40 p-4 text-center text-xs font-semibold hover:bg-muted/40">
+                {isUploading ? "Enviando imagens..." : "Selecionar fotos do computador ou celular (JPG, PNG, WebP, até 5 MB)"}
+                <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleUpload} disabled={isUploading||isSaving} className="sr-only" />
+              </label>
               <div className="flex gap-2">
                 <Input
                   type="url"
