@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ArrowDown, ArrowUpRight, Heart, HeartHandshake, Instagram, MapPin, MessageCircle, Ruler, Sparkles, Sun } from "lucide-react";
 import { getBanners } from "@/lib/data";
 import styles from "./home.module.css";
+import { HomeAtmosphere } from "./home-atmosphere";
+import { HomeButterflies } from "./home-butterflies";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
@@ -30,10 +32,12 @@ export default async function HomePage() {
   const banner = banners.find((item) => item.image_url);
 
   return (
-    <div className={styles.home} id="inicio">
+    <HomeAtmosphere>
       <section className={styles.hero} aria-labelledby="hero-title">
+        <div className={styles.colorClouds} aria-hidden="true"><span /><span /><span /></div>
+        <HomeButterflies />
         <div className={styles.heroInner}>
-          <div className={styles.heroCopy}>
+          <div className={`${styles.heroCopy} motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700`}>
             <span className={styles.eyebrow}><span /> PEQUENOS LOOKS. GRANDES HISTÓRIAS.</span>
             <h1 id="hero-title">Para vestir a infância de <em>alegria.</em></h1>
             <p>Roupas para brincar, descobrir e criar memórias. Conheça a Click Modas 25 e encontre carinho em cada detalhe da moda infantil.</p>
@@ -43,7 +47,7 @@ export default async function HomePage() {
             </div>
             <div className={styles.heroNote}><Heart size={17} aria-hidden="true" /> Moda infantil · Tamanhos 2 ao 16 · São Paulo</div>
           </div>
-          <div className={styles.heroArt}>
+          <div className={`${styles.heroArt} motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-1000`}>
             <span className={styles.artLabel}>O MELHOR LOOK É SER CRIANÇA</span>
             <div className={styles.imageFrame}>
               {banner ? <Image src={banner.image_url} alt={banner.title || "Universo infantil Click Modas 25"} fill priority sizes="(max-width: 800px) 92vw, 48vw" className={styles.bannerImage} /> : <div className={styles.brandArt}><div className={styles.rainbow} aria-hidden="true"><span /><span /><span /></div><Image src="/click-modas-logo.svg" alt="Click Modas 25" width={300} height={100} priority /><p>Um mundo de possibilidades.<br />Uma infância cheia de cor.</p></div>}
@@ -61,7 +65,7 @@ export default async function HomePage() {
         <div className={styles.aboutText}><p>Tem roupa que acompanha o primeiro passeio. Outras viram favoritas para brincar. E tem aquele look que fica para sempre na foto de família.</p><p>É para fazer parte desses momentos que a Click Modas 25 existe: uma loja de moda infantil com peças para meninas e meninos, do tamanho 2 ao 16, e uma conversa próxima com cada família.</p><a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>Conte para a gente o que você procura <ArrowUpRight size={18} aria-hidden="true" /></a></div>
       </section>
 
-      <section id="nosso-universo" className={styles.moments} aria-labelledby="moments-title"><div className={styles.section}>
+      <section id="nosso-universo" className={styles.moments} aria-labelledby="moments-title"><HomeButterflies variant="garden" /><div className={styles.section}>
         <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>CADA FASE, UMA NOVA DESCOBERTA</span><h2 id="moments-title">Para todos os jeitos<br />de <em>ser criança.</em></h2></div><p>Do dia a dia às ocasiões que merecem uma foto. Um universo de possibilidades para acompanhar os pequenos.</p></div>
         <div className={styles.momentGrid}>{moments.map(({ number, icon: Icon, title, text, color }) => <article key={number} className={`${styles.momentCard} ${styles[color]}`}><div className={styles.momentTop}><Icon size={36} strokeWidth={1.3} aria-hidden="true" /><span>{number}</span></div><h3>{title}</h3><p>{text}</p></article>)}</div>
         <p className={styles.collectionNote}>Quer conhecer as peças disponíveis? <Link href="/catalogo">Explore nossa coleção <ArrowUpRight size={16} aria-hidden="true" /></Link></p>
@@ -78,7 +82,7 @@ export default async function HomePage() {
 
       <section id="visite" className={styles.visit} aria-labelledby="visit-title"><div className={`${styles.section} ${styles.visitInner}`}><div><span className={styles.eyebrow}>UM CONVITE PARA VOCÊ</span><h2 id="visit-title">Venha conhecer<br />nosso <em>cantinho.</em></h2><p>Será um prazer receber sua família e ajudar a encontrar o próximo look favorito dos pequenos.</p></div><div className={styles.addressCard}><MapPin size={29} strokeWidth={1.5} aria-hidden="true" /><h3>Click Modas 25</h3><address>{address}</address><p>Fale com a equipe para confirmar os horários de atendimento antes da visita.</p><a href={maps} target="_blank" rel="noopener noreferrer" className={styles.primary}>Como chegar <ArrowUpRight size={18} aria-hidden="true" /></a><a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>Consultar horário de atendimento</a></div></div></section>
 
-      <section className={`${styles.section} ${styles.social}`} aria-labelledby="social-title"><Instagram size={32} strokeWidth={1.4} aria-hidden="true" /><span className={styles.eyebrow}>NOSSO DIA A DIA TEM MAIS COR</span><h2 id="social-title">Vamos continuar<br />essa história?</h2><p>Inspirações, novidades e um pouquinho do nosso universo infantil. Encontre a Click Modas 25 no Instagram.</p><a href={instagram} className={styles.primary} target="_blank" rel="noopener noreferrer">@clickmodas_kids <ArrowUpRight size={18} aria-hidden="true" /></a></section>
-    </div>
+      <section className={`${styles.section} ${styles.social}`} aria-labelledby="social-title"><HomeButterflies variant="social" /><Instagram size={32} strokeWidth={1.4} aria-hidden="true" /><span className={styles.eyebrow}>NOSSO DIA A DIA TEM MAIS COR</span><h2 id="social-title">Vamos continuar<br />essa história?</h2><p>Inspirações, novidades e um pouquinho do nosso universo infantil. Encontre a Click Modas 25 no Instagram.</p><a href={instagram} className={styles.primary} target="_blank" rel="noopener noreferrer">@clickmodas_kids <ArrowUpRight size={18} aria-hidden="true" /></a></section>
+    </HomeAtmosphere>
   );
 }
