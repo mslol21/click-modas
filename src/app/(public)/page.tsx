@@ -156,29 +156,14 @@ export default async function HomePage() {
             <span className={styles.artLabel}>O MELHOR LOOK É SER CRIANÇA</span>
             <div className={styles.imageFrame}>
               <Link href="/catalogo" className="block w-full h-full relative group" aria-label="Acessar catálogo de produtos">
-                {banner ? (
-                  <Image
-                    src={banner.image_url}
-                    alt={banner.title || "Universo infantil Click Modas 25"}
-                    fill
-                    priority
-                    sizes="(max-width: 800px) 92vw, 48vw"
-                    className={styles.bannerImage}
-                  />
-                ) : (
-                  <div className={styles.brandArt}>
-                    <div className={styles.rainbow} aria-hidden="true">
-                      <span />
-                      <span />
-                      <span />
-                    </div>
-                    <Image src="/click-modas-logo.svg" alt="Click Modas 25" width={300} height={100} priority />
-                    <p>
-                      Um mundo de possibilidades.<br />
-                      Uma infância cheia de cor.
-                    </p>
-                  </div>
-                )}
+                <Image
+                  src="/images/hero-kids.jpg"
+                  alt="Moda Infantil Click Modas 25 — Roupas encantadoras do tamanho 2 ao 16"
+                  fill
+                  priority
+                  sizes="(max-width: 800px) 92vw, 48vw"
+                  className={styles.bannerImage}
+                />
               </Link>
             </div>
             <Link href="/catalogo" className={styles.artBadge}>
@@ -194,6 +179,25 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Banner Promocional Panorâmico Cadastrado */}
+      {banner && banner.image_url && (
+        <section className="max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 pb-2">
+          <Link
+            href={banner.link_url || "/catalogo"}
+            className="block w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-brand-pinkLight hover:shadow-md transition-all relative aspect-[3/1] sm:aspect-[3.6/1]"
+            aria-label={banner.title || "Ver coleção"}
+          >
+            <Image
+              src={banner.image_url}
+              alt={banner.title || "Click Modas 25"}
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 1200px) 100vw, 1200px"
+            />
+          </Link>
+        </section>
+      )}
 
       {/* 2. FAIXA COLORIDA INSTITUCIONAL */}
       <div className={styles.ribbon} aria-label="O universo da Click Modas">
