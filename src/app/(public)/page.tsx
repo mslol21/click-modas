@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   Heart,
@@ -15,20 +16,21 @@ import {
   Sparkles,
   Shirt,
   Layers,
-  Truck,
-  ShieldCheck,
-  Store,
   Sun,
+  Truck,
+  Store,
 } from "lucide-react";
 import { getBanners, getCategories, getProducts } from "@/lib/data";
 import { FeaturedProductsCarousel } from "@/components/product/featured-carousel";
 import styles from "./home.module.css";
+import { HomeAtmosphere } from "./home-atmosphere";
+import { HomeButterflies } from "./home-butterflies";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
-  title: "Click Modas 25 — Moda Infantil do Tamanho 2 ao 16",
+  title: "Click Modas 25 — Para vestir a infância de alegria",
   description:
-    "Roupas infantis confortáveis para brincar e passear. Catálogo virtual com vestidos, conjuntos e novidades. Atendimento e pedidos diretos no WhatsApp.",
+    "Conheça a Click Modas 25: moda infantil do tamanho 2 ao 16, atendimento próximo e looks para acompanhar cada descoberta. Visite nossa loja em São Paulo ou fale pelo WhatsApp.",
 };
 
 const whatsapp =
@@ -43,19 +45,22 @@ const moments = [
     number: "01",
     icon: Sun,
     title: "Dias de brincar",
-    text: "Combinações leves, tecidos frescos e liberdade de movimento para a energia dos pequenos.",
+    text: "Combinações leves e descontraídas para acompanhar a energia de quem tem um mundo inteiro para descobrir.",
+    color: "peach",
   },
   {
     number: "02",
     icon: Heart,
     title: "Passeios em família",
-    text: "Looks arrumadinhos e cheios de personalidade para fotos, festinhas e passeios de fim de semana.",
+    text: "Aquele look cheio de personalidade para um domingo especial, uma visita ou uma nova aventura juntos.",
+    color: "lilac",
   },
   {
     number: "03",
     icon: Sparkles,
     title: "Momentos especiais",
-    text: "Vestidos e conjuntos delicados que marcam aniversários e conquistas com encanto e bom gosto.",
+    text: "Delicadeza e encanto para celebrar aniversários, encontros e as pequenas grandes conquistas da infância.",
+    color: "mint",
   },
 ];
 
@@ -65,28 +70,28 @@ const categoryShortcuts = [
     slug: "vestidos-infantis",
     desc: "Tamanhos 2 ao 16",
     icon: Sparkles,
-    color: "bg-purple-50 text-brand-purple border-purple-100",
+    color: "bg-purple-100/70 text-brand-purple border-purple-200/80",
   },
   {
     name: "Conjuntos Menina",
     slug: "conjuntos-menina",
-    desc: "Conforto e estilo",
+    desc: "Looks confortáveis",
     icon: Shirt,
-    color: "bg-pink-50 text-brand-pink border-pink-100",
+    color: "bg-pink-100/70 text-brand-pink border-pink-200/80",
   },
   {
     name: "Conjuntos Menino",
     slug: "conjuntos-menino",
-    desc: "Dia a dia e passeio",
+    desc: "Estilo & liberdade",
     icon: Layers,
-    color: "bg-indigo-50 text-indigo-700 border-indigo-100",
+    color: "bg-indigo-100/70 text-indigo-700 border-indigo-200/80",
   },
   {
     name: "Linha Bebê",
     slug: "linha-bebe",
     desc: "Toque macio",
     icon: Heart,
-    color: "bg-rose-50 text-rose-600 border-rose-100",
+    color: "bg-rose-100/70 text-rose-600 border-rose-200/80",
   },
 ];
 
@@ -102,119 +107,111 @@ export default async function HomePage() {
   const showcaseProducts = featured.length >= 3 ? featured : allProducts;
 
   return (
-    <div className={styles.home} id="inicio">
-      {/* 1. HERO SECTION — Limpa, profissional e humana */}
+    <HomeAtmosphere>
+      {/* 1. HERO SECTION COM ATMOSFERA, BORBOLETAS E ACESSO AO CATÁLOGO */}
       <section className={styles.hero} aria-labelledby="hero-title">
+        <div className={styles.colorClouds} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
+        <HomeButterflies variant="hero" />
         <div className={styles.heroInner}>
-          <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>MODA INFANTIL • SÃO PAULO</span>
+          <div
+            className={`${styles.heroCopy} motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700`}
+          >
+            <span className={styles.eyebrow}>
+              <span /> PEQUENOS LOOKS. GRANDES HISTÓRIAS.
+            </span>
             <h1 id="hero-title">
-              Para vestir a infância com <em>conforto e alegria.</em>
+              Para vestir a infância de <em>alegria.</em>
             </h1>
             <p>
-              Peças feitas para crianças brincarem livremente e estarem sempre bem vestidas. Escolha no nosso
-              catálogo virtual e finalize com atendimento atencioso pelo WhatsApp.
+              Roupas para brincar, descobrir e criar memórias. Conheça a Click Modas 25 e encontre carinho em
+              cada detalhe da moda infantil.
             </p>
-
             <div className={styles.actions}>
               <Link className={styles.primary} href="/catalogo">
                 <ShoppingBag size={17} aria-hidden="true" />
-                <span>Explorar Catálogo Completo</span>
-                <ArrowRight size={16} aria-hidden="true" />
+                <span>Ver Catálogo Completo</span>
+                <ArrowRight size={17} aria-hidden="true" />
               </Link>
               <a
-                className={styles.secondaryAction}
+                className={styles.textLink}
                 href={whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Phone size={16} aria-hidden="true" />
-                <span>Falar no WhatsApp</span>
-                <ArrowUpRight size={15} aria-hidden="true" />
+                Falar pelo WhatsApp <ArrowUpRight size={16} aria-hidden="true" />
               </a>
             </div>
-
             <div className={styles.heroNote}>
-              <span>
-                <Ruler size={15} className="text-brand-purple shrink-0" aria-hidden="true" />
-                Tamanhos 2 ao 16
-              </span>
-              <span>
-                <Truck size={15} className="text-brand-purple shrink-0" aria-hidden="true" />
-                Entrega ou Retirada
-              </span>
-              <span>
-                <Store size={15} className="text-brand-purple shrink-0" aria-hidden="true" />
-                Galeria Arco-Íris, SP
-              </span>
+              <Heart size={16} aria-hidden="true" /> Moda infantil · Tamanhos 2 ao 16 · São Paulo
             </div>
           </div>
 
-          <div className={styles.heroArt}>
+          <div
+            className={`${styles.heroArt} motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-1000`}
+          >
+            <span className={styles.artLabel}>O MELHOR LOOK É SER CRIANÇA</span>
             <div className={styles.imageFrame}>
-              <Link
-                href="/catalogo"
-                className="block w-full h-full relative group"
-                aria-label="Acessar catálogo de produtos"
-              >
+              <Link href="/catalogo" className="block w-full h-full relative group" aria-label="Acessar catálogo de produtos">
                 {banner ? (
                   <Image
                     src={banner.image_url}
-                    alt={banner.title || "Catálogo de moda infantil Click Modas 25"}
+                    alt={banner.title || "Universo infantil Click Modas 25"}
                     fill
                     priority
-                    sizes="(max-width: 900px) 92vw, 48vw"
+                    sizes="(max-width: 800px) 92vw, 48vw"
                     className={styles.bannerImage}
                   />
                 ) : (
                   <div className={styles.brandArt}>
-                    <Image
-                      src="/click-modas-logo.svg"
-                      alt="Click Modas 25"
-                      width={280}
-                      height={90}
-                      priority
-                    />
+                    <div className={styles.rainbow} aria-hidden="true">
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+                    <Image src="/click-modas-logo.svg" alt="Click Modas 25" width={300} height={100} priority />
                     <p>
-                      Moda infantil do tamanho 2 ao 16.<br />
-                      Confira nosso catálogo virtual completo.
+                      Um mundo de possibilidades.<br />
+                      Uma infância cheia de cor.
                     </p>
                   </div>
                 )}
               </Link>
             </div>
+            <Link href="/catalogo" className={styles.artBadge}>
+              <Heart size={22} aria-hidden="true" />
+              <span>
+                Feito de carinho.<br />
+                <strong>Vestido de infância.</strong>
+              </span>
+            </Link>
+            <span className={styles.artSpark} aria-hidden="true">
+              ✳
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 2. FAIXA DE BENEFÍCIOS REAIS */}
-      <div className={styles.ribbon} aria-label="Diferenciais da Click Modas 25">
-        <div className={styles.ribbonItem}>
-          <Truck size={17} aria-hidden="true" />
-          <span>Envios para todo o Brasil • Frete sob consulta</span>
-        </div>
-        <div className={styles.ribbonItem}>
-          <MessageCircle size={17} aria-hidden="true" />
-          <span>Atendimento humanizado direto no WhatsApp</span>
-        </div>
-        <div className={styles.ribbonItem}>
-          <Ruler size={17} aria-hidden="true" />
-          <span>Modelagens confortáveis do 2 ao 16</span>
-        </div>
-        <div className={styles.ribbonItem}>
-          <ShieldCheck size={17} aria-hidden="true" />
-          <span>Fotos reais e transparência total</span>
-        </div>
+      {/* 2. FAIXA COLORIDA INSTITUCIONAL */}
+      <div className={styles.ribbon} aria-label="O universo da Click Modas">
+        <span>Mais cor para os dias</span>
+        <span aria-hidden="true">✳</span>
+        <span>Mais liberdade para brincar</span>
+        <span aria-hidden="true">✳</span>
+        <span>Mais histórias para viver</span>
       </div>
 
-      {/* 3. NAVEGAÇÃO POR CATEGORIAS (Ícones profissionais, sem emojis) */}
-      <section className="border-b bg-background py-10 px-4 sm:px-6">
+      {/* 3. ATALHOS DE CATEGORIAS (ÍCONES LIMPOS, SEM EMOJIS) */}
+      <section className="bg-white/80 border-b border-[#ebdfee] py-8 px-4 sm:px-6">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 mb-6">
             <div>
               <span className={styles.eyebrow}>DEPARTAMENTOS</span>
               <h2 className="text-xl sm:text-2xl font-bold text-brand-dark mt-1">
-                O que você procura hoje?
+                Navegue pelas Categorias
               </h2>
             </div>
             <Link
@@ -228,17 +225,17 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {categoryShortcuts.map((cat) => {
-              const IconComponent = cat.icon;
+              const IconComp = cat.icon;
               return (
                 <Link
                   key={cat.slug}
                   href={`/catalogo?categoria=${cat.slug}`}
-                  className="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-border/80 hover:border-brand-purple/40 hover:shadow-md transition-all"
+                  className="group flex items-center gap-3.5 p-4 rounded-2xl bg-white border border-[#ebdfee] hover:border-brand-purple/40 hover:shadow-md transition-all"
                 >
                   <div
                     className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105 ${cat.color}`}
                   >
-                    <IconComponent className="w-5 h-5" />
+                    <IconComp className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-bold text-xs sm:text-sm text-brand-dark group-hover:text-brand-purple transition-colors truncate">
@@ -253,18 +250,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4. VITRINE DE DESTAQUES — 1 ÚNICA FILEIRA QUE RODA SOZINHA */}
+      {/* 4. VITRINE DE PRODUTOS EM DESTAQUE — EM UMA ÚNICA FILEIRA QUE RODA SOZINHA */}
       {showcaseProducts.length > 0 && (
         <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-6">
             <div>
               <span className={styles.eyebrow}>VITRINE CLICK MODAS 25</span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-dark mt-1">
-                Destaques do Catálogo
+                Destaques do Nosso Catálogo
               </h2>
               <p className="text-sm text-muted-foreground mt-1 max-w-lg">
-                Peças selecionadas com carinho. A fileira roda automaticamente; passe o cursor para pausar ou
-                use as setas.
+                Looks infantis confortáveis para brincar e passear. A fileira roda automaticamente; passe o
+                cursor para pausar ou navegue pelas setas.
               </p>
             </div>
             <Link
@@ -277,15 +274,15 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {/* Carrossel de uma única fileira */}
+          {/* Carrossel em 1 única fileira com autoplay suave */}
           <FeaturedProductsCarousel products={showcaseProducts} />
 
           <div className="mt-8 text-center">
             <Link
               href="/catalogo"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-brand-pinkLight/80 text-brand-purple hover:bg-brand-pinkLight font-bold text-xs sm:text-sm transition-all shadow-sm"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-brand-pinkLight text-brand-purple hover:bg-brand-pink/20 font-bold text-xs sm:text-sm transition-all shadow-sm"
             >
-              <span>Explorar todo o catálogo com busca por SKU e tamanhos</span>
+              <span>Explorar todo o catálogo com busca e filtros</span>
               <ArrowRight size={15} />
             </Link>
           </div>
@@ -295,7 +292,7 @@ export default async function HomePage() {
       {/* 5. NOSSA ESSÊNCIA */}
       <section id="nossa-essencia" className={`${styles.section} ${styles.about}`} aria-labelledby="about-title">
         <div>
-          <span className={styles.eyebrow}>NOSSA HISTÓRIA</span>
+          <span className={styles.eyebrow}>OLÁ, SOMOS A CLICK MODAS 25</span>
           <h2 id="about-title">
             A infância passa rápido.<br />
             <em>O carinho fica.</em>
@@ -310,38 +307,40 @@ export default async function HomePage() {
             É para fazer parte desses momentos que a Click Modas 25 existe: uma loja de moda infantil com peças
             para meninas e meninos, do tamanho 2 ao 16, e uma conversa próxima com cada família.
           </p>
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link href="/catalogo" className={styles.primary}>
-              <ShoppingBag size={16} />
-              <span>Conhecer Catálogo</span>
+              <ShoppingBag size={15} />
+              <span>Ver Peças no Catálogo</span>
             </Link>
-            <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.secondaryAction}>
-              <Phone size={15} />
-              <span>Chamar no WhatsApp</span>
+            <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles.textLink}>
+              Conte para a gente o que procura <ArrowUpRight size={17} aria-hidden="true" />
             </a>
           </div>
         </div>
       </section>
 
-      {/* 6. NOSSO UNIVERSO */}
+      {/* 6. NOSSO UNIVERSO & MOMENTOS COM BORBOLETAS NO JARDIM */}
       <section id="nosso-universo" className={styles.moments} aria-labelledby="moments-title">
+        <HomeButterflies variant="garden" />
         <div className={styles.section}>
           <div className={styles.sectionHeading}>
-            <span className={styles.eyebrow}>PARA CADA FASE</span>
-            <h2 id="moments-title">
-              Para todos os momentos de <em>ser criança.</em>
-            </h2>
+            <div>
+              <span className={styles.eyebrow}>CADA FASE, UMA NOVA DESCOBERTA</span>
+              <h2 id="moments-title">
+                Para todos os jeitos<br />
+                de <em>ser criança.</em>
+              </h2>
+            </div>
             <p>
-              Do dia a dia confortável até as ocasiões especiais que merecem um look marcante.
+              Do dia a dia às ocasiões que merecem uma foto. Um universo de possibilidades para acompanhar os
+              pequenos.
             </p>
           </div>
           <div className={styles.momentGrid}>
-            {moments.map(({ number, icon: Icon, title, text }) => (
-              <article key={number} className={styles.momentCard}>
+            {moments.map(({ number, icon: Icon, title, text, color }) => (
+              <article key={number} className={`${styles.momentCard} ${styles[color]}`}>
                 <div className={styles.momentTop}>
-                  <div className="w-10 h-10 rounded-xl bg-brand-pinkLight text-brand-purple flex items-center justify-center">
-                    <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
-                  </div>
+                  <Icon size={34} strokeWidth={1.4} aria-hidden="true" />
                   <span>{number}</span>
                 </div>
                 <h3>{title}</h3>
@@ -349,72 +348,51 @@ export default async function HomePage() {
               </article>
             ))}
           </div>
-
-          {/* Banner de apoio para o catálogo */}
-          <div className="mt-8 p-6 sm:p-8 rounded-3xl bg-white border border-border/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base sm:text-lg text-brand-dark">
-                Procurando um tamanho específico do 2 ao 16?
-              </h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                Consulte as peças disponíveis com fotos e descrições detalhadas em nosso catálogo virtual.
-              </p>
-            </div>
-            <Link
-              href="/catalogo"
-              className="shrink-0 inline-flex items-center gap-2 bg-brand-purple text-white px-6 py-3 rounded-full text-xs font-bold hover:bg-brand-purple/90 transition-all shadow-sm"
-            >
-              <ShoppingBag size={15} />
-              <span>Acessar Catálogo</span>
-              <ArrowRight size={15} />
+          <p className={styles.collectionNote}>
+            Quer conhecer as peças disponíveis?{" "}
+            <Link href="/catalogo">
+              Explore nossa coleção <ArrowUpRight size={16} aria-hidden="true" />
             </Link>
-          </div>
+          </p>
         </div>
       </section>
 
       {/* 7. ATENDIMENTO PERSONALIZADO */}
       <section id="atendimento" className={`${styles.section} ${styles.care}`} aria-labelledby="care-title">
         <div className={styles.careIntro}>
-          <span className={styles.eyebrow}>ATENDIMENTO HUMANIZADO</span>
+          <span className={styles.eyebrow}>DE FAMÍLIA PARA FAMÍLIA</span>
           <h2 id="care-title">
-            Escolher fica melhor com <em>alguém por perto.</em>
+            Escolher fica melhor<br />
+            com alguém <em>por perto.</em>
           </h2>
           <p>
-            Dúvida sobre o tamanho ou o caimento? Fale diretamente com a proprietária pelo WhatsApp e receba
-            fotos e orientações com tranquilidade.
+            Uma dúvida sobre o tamanho? Procurando uma combinação? Fale com a gente e escolha com mais tranquilidade.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <a href={whatsapp} className={styles.primary} target="_blank" rel="noopener noreferrer">
-              <MessageCircle size={17} aria-hidden="true" />
-              <span>Conversar com a Loja</span>
-            </a>
-            <Link href="/catalogo" className={styles.secondaryAction}>
-              <span>Ver Catálogo Primeiro</span>
-              <ArrowRight size={15} aria-hidden="true" />
-            </Link>
-          </div>
+          <a href={whatsapp} className={styles.primary} target="_blank" rel="noopener noreferrer">
+            <MessageCircle size={18} aria-hidden="true" /> Conversar com a loja
+          </a>
         </div>
         <div className={styles.careItems}>
           {[
             {
-              icon: MessageCircle,
-              title: "Conversa Direta no WhatsApp",
-              text: "Atendimento ágil para tirar dúvidas de estampas, tamanhos e disponibilidade.",
+              icon: HeartHandshake,
+              title: "Uma conversa de verdade",
+              text: "Atendimento direto pelo WhatsApp para conhecer as opções e tirar suas dúvidas.",
             },
             {
               icon: Ruler,
-              title: "Auxílio para Acertar nas Medidas",
-              text: "Ajudamos você a conferir a fita métrica antes de finalizar o pedido.",
+              title: "Ajuda para acertar na escolha",
+              text: "Consulte as medidas e os tamanhos disponíveis antes de decidir o look.",
             },
             {
-              icon: Truck,
-              title: "Entrega ou Retirada na Loja",
-              text: "Combine a forma de envio mais prática e rápida para a sua localidade.",
+              icon: MapPin,
+              title: "Do seu jeito, pertinho de você",
+              text: "Visite a loja ou consulte com nossa equipe as possibilidades de entrega e retirada.",
             },
           ].map(({ icon: Icon, title, text }) => (
             <div key={title} className={styles.careItem}>
               <span>
-                <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+                <Icon size={22} strokeWidth={1.5} aria-hidden="true" />
               </span>
               <div>
                 <h3>{title}</h3>
@@ -429,62 +407,54 @@ export default async function HomePage() {
       <section id="visite" className={styles.visit} aria-labelledby="visit-title">
         <div className={`${styles.section} ${styles.visitInner}`}>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-pink-200">
-              NOSSO ESPAÇO FÍSICO
-            </span>
+            <span className={styles.eyebrow}>UM CONVITE PARA VOCÊ</span>
             <h2 id="visit-title">
-              Venha conhecer nosso <em>cantinho.</em>
+              Venha conhecer<br />
+              nosso <em>cantinho.</em>
             </h2>
             <p>
-              Será um prazer receber sua família e ajudar a encontrar o próximo look favorito dos pequenos na
-              região de São Paulo.
+              Será um prazer receber sua família e ajudar a encontrar o próximo look favorito dos pequenos.
             </p>
           </div>
           <div className={styles.addressCard}>
-            <MapPin size={26} strokeWidth={1.75} aria-hidden="true" className="text-pink-300" />
+            <MapPin size={28} strokeWidth={1.5} aria-hidden="true" />
             <h3>Click Modas 25</h3>
             <address>{address}</address>
             <p>Fale com a equipe para confirmar os horários de atendimento antes da visita.</p>
             <div className="flex flex-wrap items-center gap-3">
               <a href={maps} target="_blank" rel="noopener noreferrer" className={styles.primary}>
-                <span>Como Chegar</span>
-                <ArrowUpRight size={15} aria-hidden="true" />
+                Como chegar <ArrowUpRight size={17} aria-hidden="true" />
               </a>
               <a
                 href={whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-pink-200 hover:text-white underline font-semibold ml-2"
+                className={styles.textLink}
               >
-                Consultar horário
+                Consultar horário de atendimento
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 9. REDES SOCIAIS */}
-      <section className={styles.social} aria-labelledby="social-title">
-        <div className="w-12 h-12 rounded-2xl bg-brand-pinkLight text-brand-purple flex items-center justify-center mx-auto mb-3">
-          <Instagram size={24} strokeWidth={1.75} aria-hidden="true" />
-        </div>
-        <span className={styles.eyebrow}>INSTAGRAM OFICIAL</span>
-        <h2 id="social-title">Acompanhe nossas novidades</h2>
+      {/* 9. REDES SOCIAIS COM BORBOLETAS */}
+      <section className={`${styles.section} ${styles.social}`} aria-labelledby="social-title">
+        <HomeButterflies variant="social" />
+        <Instagram size={32} strokeWidth={1.4} aria-hidden="true" />
+        <span className={styles.eyebrow}>NOSSO DIA A DIA TEM MAIS COR</span>
+        <h2 id="social-title">
+          Vamos continuar<br />
+          essa história?
+        </h2>
         <p>
-          Fotos reais das peças, bastidores e combinações de looks para os pequenos. Siga a Click Modas 25 no
+          Inspirações, novidades e um pouquinho do nosso universo infantil. Encontre a Click Modas 25 no
           Instagram.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <a href={instagram} className={styles.primary} target="_blank" rel="noopener noreferrer">
-            <span>@clickmodas_kids no Instagram</span>
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </a>
-          <Link href="/catalogo" className={styles.secondaryAction}>
-            <span>Ir para o Catálogo Virtual</span>
-            <ArrowRight size={15} />
-          </Link>
-        </div>
+        <a href={instagram} className={styles.primary} target="_blank" rel="noopener noreferrer">
+          @clickmodas_kids <ArrowUpRight size={17} aria-hidden="true" />
+        </a>
       </section>
-    </div>
+    </HomeAtmosphere>
   );
 }
