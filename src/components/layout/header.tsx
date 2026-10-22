@@ -2,15 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useCart } from "@/context/cart-context";
-import { ShoppingBag, Search, Menu, X, Phone, Instagram, Sparkles } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, Phone, Instagram, Sparkles, Shirt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
   const router = useRouter();
-  const pathname = usePathname();
   const { totalItems } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,14 +24,12 @@ export function Header() {
     }
   };
 
-  if (pathname === "/") return <HomeHeader />;
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all">
       {/* Top Notification Bar */}
       <div className="bg-brand-pinkLight py-2 px-4 text-center text-xs sm:text-sm font-medium text-brand-purple flex items-center justify-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 text-brand-pink" />
-        <span>Moda Infantil do <strong>Tamanho 2 ao 16</strong> • Atendimento e Pedidos pelo WhatsApp!</span>
+        <Sparkles className="w-3.5 h-3.5 text-brand-pink shrink-0" />
+        <span>Moda Infantil do <strong>Tamanho 2 ao 16</strong> • Catálogo e Pedidos pelo WhatsApp!</span>
         <a
           href="https://wa.me/5511954686239"
           target="_blank"
@@ -44,7 +41,7 @@ export function Header() {
       </div>
 
       <div className="container mx-auto px-3 sm:px-5 min-h-20 flex items-center justify-between gap-2 lg:gap-4">
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu & Search Buttons */}
         <div className="flex items-center gap-2 lg:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -65,50 +62,54 @@ export function Header() {
 
         {/* Identidade visual da Click Modas 25 */}
         <Link href="/" className="flex shrink-0 items-center rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-purple" aria-label="Click Modas 25 — página inicial">
-          <Image src="/click-modas-logo.svg" alt="Click Modas 25" width={180} height={60} className="h-12 w-auto max-w-[145px] object-contain sm:h-14 sm:max-w-[180px]" />
+          <Image src="/click-modas-logo.svg" alt="Click Modas 25" width={180} height={60} className="h-12 w-auto max-w-[145px] object-contain sm:h-14 sm:max-w-[180px]" priority />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-4 text-sm font-medium">
+        <nav className="hidden lg:flex items-center gap-3 xl:gap-5 text-sm font-medium">
           <Link href="/" className="text-brand-dark hover:text-brand-purple transition-colors">
             Início
           </Link>
-          <Link href="/catalogo" className="text-brand-dark hover:text-brand-purple transition-colors">
-            Catálogo Completo
+          <Link
+            href="/catalogo"
+            className="inline-flex items-center gap-1.5 bg-brand-purple text-white px-3.5 py-1.5 rounded-full text-xs font-bold hover:bg-brand-purple/90 shadow-sm transition-all"
+          >
+            <Shirt className="w-3.5 h-3.5" />
+            <span>Catálogo Completo</span>
           </Link>
-          <Link href="/catalogo?categoria=vestidos-infantis" className="text-brand-dark hover:text-brand-purple transition-colors">
+          <Link href="/catalogo?categoria=vestidos-infantis" className="text-brand-dark hover:text-brand-purple transition-colors text-xs xl:text-sm">
             Vestidos
           </Link>
-          <Link href="/catalogo?categoria=conjuntos-menina" className="text-brand-dark hover:text-brand-purple transition-colors">
+          <Link href="/catalogo?categoria=conjuntos-menina" className="text-brand-dark hover:text-brand-purple transition-colors text-xs xl:text-sm">
             Conjuntos Menina
           </Link>
-          <Link href="/catalogo?categoria=conjuntos-menino" className="text-brand-dark hover:text-brand-purple transition-colors">
+          <Link href="/catalogo?categoria=conjuntos-menino" className="text-brand-dark hover:text-brand-purple transition-colors text-xs xl:text-sm">
             Conjuntos Menino
           </Link>
-          <Link href="/guia-de-medidas" className="text-brand-dark hover:text-brand-purple transition-colors">
+          <Link href="/guia-de-medidas" className="text-brand-dark hover:text-brand-purple transition-colors text-xs xl:text-sm">
             Guia de Medidas
           </Link>
-          <Link href="/sobre" className="text-brand-dark hover:text-brand-purple transition-colors">
+          <Link href="/sobre" className="text-brand-dark hover:text-brand-purple transition-colors text-xs xl:text-sm">
             Sobre Nós
           </Link>
         </nav>
 
         {/* Desktop Search Bar */}
-        <div className="hidden xl:flex items-center max-w-[220px] w-full">
+        <div className="hidden lg:flex items-center max-w-[200px] xl:max-w-[230px] w-full">
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <input
               type="text"
-              placeholder="Buscar por peça, cor ou SKU..."
+              placeholder="Buscar no catálogo..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-9 pr-4 rounded-full bg-muted/70 text-xs focus:bg-background border border-transparent focus:border-brand-lilac outline-none transition-all placeholder:text-muted-foreground"
+              className="w-full h-9 pl-8 pr-3 rounded-full bg-muted/70 text-xs focus:bg-background border border-transparent focus:border-brand-lilac outline-none transition-all placeholder:text-muted-foreground"
             />
-            <Search className="w-4 h-4 absolute left-3 top-3 text-muted-foreground pointer-events-none" />
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-3 text-muted-foreground pointer-events-none" />
           </form>
         </div>
 
         {/* Actions (WhatsApp & Cart) */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <a
             href="https://instagram.com/clickmodas_kids"
             target="_blank"
@@ -130,7 +131,7 @@ export function Header() {
           </a>
 
           <Link href="/carrinho">
-            <Button variant="default" size="default" className="relative gap-2 px-4 rounded-full shadow-sm">
+            <Button variant="default" size="default" className="relative gap-2 px-3.5 sm:px-4 rounded-full shadow-sm bg-brand-purple hover:bg-brand-purple/90">
               <ShoppingBag className="w-4 h-4" />
               <span className="hidden sm:inline text-xs font-semibold">Sacola</span>
               {totalItems > 0 && (
@@ -150,7 +151,7 @@ export function Header() {
             <input
               type="text"
               autoFocus
-              placeholder="Digite o que procura (ex: vestido, camisa)..."
+              placeholder="Buscar no catálogo (ex: vestido, conjunto)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full h-11 pl-10 pr-4 rounded-full bg-muted text-sm border focus:border-brand-purple outline-none"
@@ -174,37 +175,38 @@ export function Header() {
             <Link
               href="/catalogo"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1 text-brand-dark hover:text-brand-purple"
+              className="py-2 px-4 rounded-full bg-brand-purple text-white font-bold text-sm inline-flex items-center gap-2"
             >
-              Catálogo Completo
+              <Shirt className="w-4 h-4" />
+              <span>Ver Catálogo Completo</span>
             </Link>
             <Link
               href="/catalogo?categoria=vestidos-infantis"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 text-brand-dark hover:text-brand-purple"
             >
-              Vestidos Infantis
+              👗 Vestidos Infantis
             </Link>
             <Link
               href="/catalogo?categoria=conjuntos-menina"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 text-brand-dark hover:text-brand-purple"
             >
-              Conjuntos Menina
+              👚 Conjuntos Menina
             </Link>
             <Link
               href="/catalogo?categoria=conjuntos-menino"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 text-brand-dark hover:text-brand-purple"
             >
-              Conjuntos Menino
+              👕 Conjuntos Menino
             </Link>
             <Link
               href="/catalogo?categoria=linha-bebe"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1 text-brand-dark hover:text-brand-purple"
             >
-              Linha Bebê
+              👶 Linha Bebê
             </Link>
             <Link
               href="/guia-de-medidas"
@@ -251,30 +253,6 @@ export function Header() {
           </div>
         </div>
       )}
-    </header>
-  );
-}
-
-
-function HomeHeader() {
-  const [open, setOpen] = useState(false);
-  const links = [
-    { href: "/#nossa-essencia", label: "Nossa essência" },
-    { href: "/#nosso-universo", label: "Nosso universo" },
-    { href: "/#atendimento", label: "Atendimento" },
-    { href: "/#visite", label: "Visite a loja" },
-  ];
-  return (
-    <header className="sticky top-0 z-40 border-b border-[#e9e0e8] bg-[#fffcf8]/95 backdrop-blur-md">
-      <a href="#inicio" className="sr-only focus:not-sr-only focus:block focus:p-3">Ir para o conteúdo</a>
-      <div className="bg-[#e9e1ef] px-4 py-2 text-center text-[10px] font-medium tracking-wide text-[#59436a] sm:text-xs">Uma infância cheia de cor. Moda infantil do tamanho 2 ao 16.</div>
-      <div className="mx-auto flex min-h-[84px] max-w-[1200px] items-center justify-between gap-5 px-6">
-        <Link href="/" aria-label="Click Modas 25 — Início"><Image src="/click-modas-logo.svg" alt="Click Modas 25" width={165} height={55} priority className="h-auto w-[140px] sm:w-[165px]" /></Link>
-        <nav aria-label="Navegação principal" className="hidden items-center gap-7 text-xs font-medium text-[#51425c] lg:flex">{links.map(link => <a key={link.href} href={link.href} className="py-3 hover:text-brand-purple hover:underline underline-offset-4">{link.label}</a>)}</nav>
-        <a href="https://wa.me/5511954686239" target="_blank" rel="noopener noreferrer" className="hidden items-center gap-2 rounded-full border border-[#68418b] px-5 py-3 text-xs font-semibold text-[#68418b] transition-colors hover:bg-[#efe7f2] lg:flex"><Phone size={15} aria-hidden="true" /> Fale com a gente</a>
-        <button type="button" onClick={() => setOpen(!open)} aria-label={open ? "Fechar menu" : "Abrir menu"} aria-expanded={open} aria-controls="home-mobile-nav" className="flex h-11 w-11 items-center justify-center rounded-full border border-[#e4d9e8] text-[#68418b] lg:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
-      </div>
-      {open && <nav id="home-mobile-nav" aria-label="Navegação móvel" className="border-t bg-[#fffcf8] px-6 pb-5 lg:hidden">{links.map(link => <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="block border-b border-[#efe7f2] py-4 text-sm">{link.label}</a>)}<a href="https://wa.me/5511954686239" target="_blank" rel="noopener noreferrer" className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#68418b] px-4 py-3 text-sm text-white"><Phone size={16} aria-hidden="true" /> Falar pelo WhatsApp</a></nav>}
     </header>
   );
 }
