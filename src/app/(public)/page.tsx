@@ -17,7 +17,7 @@ import {
   Shirt,
 } from "lucide-react";
 import { getBanners, getCategories, getProducts } from "@/lib/data";
-import { ProductCard } from "@/components/product/product-card";
+import { FeaturedProductsCarousel } from "@/components/product/featured-carousel";
 import styles from "./home.module.css";
 import { HomeAtmosphere } from "./home-atmosphere";
 import { HomeButterflies } from "./home-butterflies";
@@ -88,14 +88,16 @@ const categoryShortcuts = [
 ];
 
 export default async function HomePage() {
-  const [banners, categories, products] = await Promise.all([
+  const [banners, categories, allProducts] = await Promise.all([
     getBanners().catch(() => []),
     getCategories().catch(() => []),
-    getProducts({ featured: true }).catch(() => getProducts().catch(() => [])),
+    getProducts().catch(() => []),
   ]);
 
   const banner = banners.find((item) => item.image_url);
-  const showcaseProducts = products.slice(0, 8);
+  // Prioriza produtos em destaque, se houver, ou usa todos os produtos cadastrados
+  const featured = allProducts.filter((p) => p.is_featured);
+  const showcaseProducts = featured.length >= 3 ? featured : allProducts;
 
   return (
     <HomeAtmosphere>
@@ -226,10 +228,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. VITRINE DE PRODUTOS EM DESTAQUE */}
+      {/* 3. VITRINE DE PRODUTOS EM DESTAQUE — EM UMA ÚNICA FILEIRA QUE RODA SOZINHA */}
       {showcaseProducts.length > 0 && (
-        <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
+        <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-6">
             <div>
               <span className="text-xs font-bold text-brand-purple uppercase tracking-wider">
                 Vitrine Click Modas 25
@@ -238,12 +240,12 @@ export default async function HomePage() {
                 Destaques do Nosso Catálogo
               </h2>
               <p className="text-sm text-muted-foreground mt-1 max-w-lg">
-                Looks infantis selecionados com carinho, prontos para entrega ou retirada com pedido via WhatsApp.
+                Looks infantis selecionados com carinho, do tamanho 2 ao 16. A fileira roda automaticamente; passe o mouse para pausar ou navegue com as setas.
               </p>
             </div>
             <Link
               href="/catalogo"
-              className="inline-flex items-center gap-2 bg-brand-purple text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-brand-purple/90 transition-all shadow-sm"
+              className="inline-flex items-center gap-2 bg-brand-purple text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-brand-purple/90 transition-all shadow-sm shrink-0"
             >
               <Shirt size={15} />
               <span>Ver Todos no Catálogo</span>
@@ -251,13 +253,10 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {showcaseProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {/* Carrossel em 1 única fileira com autoplay contínuo */}
+          <FeaturedProductsCarousel products={showcaseProducts} />
 
-          <div className="mt-10 text-center">
+          <div className="mt-8 text-center">
             <Link
               href="/catalogo"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-brand-pinkLight text-brand-purple hover:bg-brand-pink/20 font-bold text-sm transition-all shadow-sm"
