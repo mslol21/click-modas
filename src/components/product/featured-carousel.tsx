@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Product } from "@/types/database";
 import { ProductCard } from "@/components/product/product-card";
-import { ChevronLeft, ChevronRight, Pause, Play, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface FeaturedProductsCarouselProps {
@@ -15,9 +15,8 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
   const [isPaused, setIsPaused] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [userInteracted, setUserInteracted] = useState(false);
 
-  // Verifica posição do scroll para atualizar estado dos botões
+  // Monitora o scroll para habilitar/desabilitar botões
   const checkScroll = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -37,14 +36,13 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
     };
   }, [checkScroll]);
 
-  // Função para avançar 1 card
+  // Avança 1 card
   const scrollNext = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     const card = scrollRef.current.querySelector<HTMLElement>("[data-carousel-item]");
     const step = card ? card.offsetWidth + 20 : 300;
 
-    // Se estiver no final, volta suavemente para o início
     if (scrollLeft + clientWidth >= scrollWidth - 20) {
       scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
     } else {
@@ -52,7 +50,7 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
     }
   }, []);
 
-  // Função para voltar 1 card
+  // Volta 1 card
   const scrollPrev = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -66,11 +64,10 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
     }
   }, []);
 
-  // Auto-scroll contínuo (roda sozinho a cada 3.5 segundos)
+  // Roda sozinho a cada 3.5 segundos com pausa automática ao interagir
   useEffect(() => {
     if (products.length <= 1) return;
 
-    // Respeita preferência do usuário por menos movimento
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -92,51 +89,42 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
       className="relative w-full group/carousel"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => {
-        setIsPaused(true);
-        setUserInteracted(true);
-      }}
+      onTouchStart={() => setIsPaused(true)}
       onTouchEnd={() => {
-        // Retoma após 4s de inatividade no touch
-        setTimeout(() => setIsPaused(false), 4000);
+        setTimeout(() => setIsPaused(false), 3000);
       }}
     >
-      {/* Controles no topo: Navegação e Indicador de Autoplay */}
+      {/* Barra superior de controle discreta e profissional */}
       <div className="flex items-center justify-between gap-3 mb-4 px-1">
-        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <span className="flex h-2 w-2 relative">
-            {!isPaused && (
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-purple opacity-75" />
-            )}
-            <span
-              className={`relative inline-flex rounded-full h-2 w-2 ${
-                isPaused ? "bg-amber-500" : "bg-brand-purple"
-              }`}
-            />
-          </span>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <span
+            className={`inline-block h-1.5 w-1.5 rounded-full transition-colors ${
+              isPaused ? "bg-amber-400" : "bg-brand-purple"
+            }`}
+          />
           <span className="hidden sm:inline">
-            {isPaused ? "Carrossel pausado" : "Girando automaticamente"}
+            {isPaused ? "Pausado (passe o cursor para escolher)" : "Rotação contínua automática"}
           </span>
           <button
             type="button"
             onClick={() => setIsPaused(!isPaused)}
-            aria-label={isPaused ? "Retomar rotação automática" : "Pausar rotação automática"}
-            className="p-1 rounded-full hover:bg-muted text-muted-foreground hover:text-brand-purple transition-colors ml-1"
-            title={isPaused ? "Play" : "Pausar"}
+            aria-label={isPaused ? "Iniciar rotação automática" : "Pausar rotação automática"}
+            className="p-1 rounded-md text-muted-foreground hover:text-brand-purple hover:bg-muted transition-colors ml-0.5"
+            title={isPaused ? "Retomar" : "Pausar"}
           >
-            {isPaused ? <Play size={13} /> : <Pause size={13} />}
+            {isPaused ? <Play size={12} /> : <Pause size={12} />}
           </button>
         </div>
 
-        {/* Setas de navegação manual */}
-        <div className="flex items-center gap-2">
+        {/* Setas de navegação manual limpas */}
+        <div className="flex items-center gap-1.5">
           <Button
             type="button"
             variant="outline"
             size="icon"
             onClick={scrollPrev}
             aria-label="Item anterior"
-            className="h-9 w-9 rounded-full border-brand-purple/20 bg-background/80 hover:bg-brand-purple hover:text-white transition-all shadow-sm"
+            className="h-8 w-8 rounded-full border border-border/80 bg-background hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all shadow-sm"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -146,7 +134,7 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
             size="icon"
             onClick={scrollNext}
             aria-label="Próximo item"
-            className="h-9 w-9 rounded-full border-brand-purple/20 bg-background/80 hover:bg-brand-purple hover:text-white transition-all shadow-sm"
+            className="h-8 w-8 rounded-full border border-border/80 bg-background hover:bg-brand-purple hover:text-white hover:border-brand-purple transition-all shadow-sm"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -160,30 +148,30 @@ export function FeaturedProductsCarousel({ products }: FeaturedProductsCarouselP
           scrollbarWidth: "none",
           msOverflowStyle: "none",
         }}
-        className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth py-2 px-1 focus:outline-none [-webkit-overflow-scrolling:touch] select-none"
+        className="flex gap-4 sm:gap-5 overflow-x-auto scroll-smooth py-2 px-1 focus:outline-none [-webkit-overflow-scrolling:touch] select-none"
       >
         {products.map((product) => (
           <div
             key={product.id}
             data-carousel-item
-            className="w-[240px] sm:w-[270px] lg:w-[290px] shrink-0 transform transition-transform duration-300 hover:-translate-y-1"
+            className="w-[235px] sm:w-[260px] lg:w-[280px] shrink-0 transform transition-transform duration-200 hover:-translate-y-0.5"
           >
             <ProductCard product={product} />
           </div>
         ))}
       </div>
 
-      {/* Gradientes sutis nas bordas para indicar continuidade */}
+      {/* Suave sombra de fade nas pontas */}
       {canScrollLeft && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-12 bottom-2 w-12 bg-gradient-to-r from-background to-transparent z-10 hidden sm:block"
+          className="pointer-events-none absolute left-0 top-12 bottom-2 w-8 bg-gradient-to-r from-background to-transparent z-10 hidden sm:block"
         />
       )}
       {canScrollRight && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-12 bottom-2 w-12 bg-gradient-to-l from-background to-transparent z-10 hidden sm:block"
+          className="pointer-events-none absolute right-0 top-12 bottom-2 w-8 bg-gradient-to-l from-background to-transparent z-10 hidden sm:block"
         />
       )}
     </div>
