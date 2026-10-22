@@ -264,7 +264,7 @@ export function ContentClient({
 
                 <div className="space-y-2">
                   <Label htmlFor="inst-delivery" className="text-xs font-semibold">
-                    Entregas e Retiradas na Galeria Arco-Íris (Página /entregas)
+                    Entregas e Retiradas na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP (Página /entregas)
                   </Label>
                   <textarea
                     id="inst-delivery"

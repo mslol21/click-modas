@@ -293,9 +293,9 @@ export const initialStoreSettings: StoreSettingsGeneral = {
   whatsapp_formatted: "(11) 95468-6239",
   instagram: "@clickmodas_kids",
   instagram_url: "https://instagram.com/clickmodas_kids",
-  reference_location: "Galeria Arco-Íris, São Paulo",
+  reference_location: "Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP",
   delivery_policy: "Modalidade e custo de entrega confirmados diretamente pela loja via WhatsApp.",
-  pickup_info: "Retiradas disponíveis na Galeria Arco-Íris, São Paulo, mediante agendamento prévio após confirmação do pedido.",
+  pickup_info: "Retiradas disponíveis na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP, mediante agendamento prévio após confirmação do pedido.",
 };
 
 export const initialSizeGuide: SizeGuideItem[] = [
@@ -310,8 +310,8 @@ export const initialSizeGuide: SizeGuideItem[] = [
 ];
 
 export const initialInstitutional = {
-  about: "A Click Modas 25 nasceu para oferecer moda infantil delicada, estilosa e com preço justo para famílias e lojistas de todo o Brasil. Localizada estrategicamente na referência da Galeria Arco-Íris em São Paulo, trabalhamos com carinho selecionando peças confortáveis que acompanham cada fase do crescimento, dos tamanhos 2 ao 16.",
-  delivery: "Trabalhamos com envio para todo o território nacional e opção de retirada presencial na Galeria Arco-Íris (São Paulo). A modalidade de entrega (Correios, transportadora ou motoboy) e o custo exato do frete são confirmados e combinados individualmente pelo nosso WhatsApp para garantir a melhor tarifa para você.",
+  about: "A Click Modas 25 nasceu para oferecer moda infantil delicada, estilosa e com preço justo para famílias e lojistas de todo o Brasil. Localizada estrategicamente na referência da Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP, trabalhamos com carinho selecionando peças confortáveis que acompanham cada fase do crescimento, dos tamanhos 2 ao 16.",
+  delivery: "Trabalhamos com envio para todo o território nacional e opção de retirada presencial na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP. A modalidade de entrega (Correios, transportadora ou motoboy) e o custo exato do frete são confirmados e combinados individualmente pelo nosso WhatsApp para garantir a melhor tarifa para você.",
   exchange: "As solicitações de troca devem ser informadas em até 7 (sete) dias corridos após o recebimento das peças via WhatsApp. O produto deve estar sem sinais de uso, com etiqueta fixada e embalagem original preservada.",
   privacy: "A Click Modas 25 respeita a privacidade de nossos clientes. Coletamos apenas as informações essenciais (como nome e contato) necessárias para viabilizar o atendimento e a separação dos seus pedidos via WhatsApp. Seus dados nunca são vendidos a terceiros.",
   terms: "Os pedidos iniciados através da plataforma representam uma intenção de compra. A confirmação de disponibilidade de estoque, prazo de entrega e pagamento é efetuada diretamente pelo nosso canal oficial de WhatsApp.",

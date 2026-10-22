@@ -405,7 +405,7 @@ export function ProductDetailsClient({
           <div className="flex items-center gap-2">
             <Truck className="w-4 h-4 text-brand-purple" />
             <span>
-              <strong>Retirada ou Envio:</strong> Galeria Arco-Íris (SP) ou Correios/transportadora.
+              <strong>Retirada ou Envio:</strong> Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP ou Correios/transportadora.
             </span>
           </div>
           <div className="flex items-center gap-2">

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Entregas e Retiradas | Click Modas 25",
   description:
-    "Saiba como funcionam os envios para todo o Brasil e a opção de retirada presencial na Galeria Arco-Íris em São Paulo.",
+    "Saiba como funcionam os envios para todo o Brasil e a opção de retirada presencial na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP.",
 };
 
 export default async function DeliveryPage() {
@@ -37,10 +37,10 @@ export default async function DeliveryPage() {
           <div className="p-5 rounded-2xl bg-muted/30 border space-y-2">
             <div className="flex items-center gap-2 font-bold text-sm text-brand-dark">
               <MapPin className="w-4 h-4 text-brand-purple" />
-              <span>Retirada na Galeria Arco-Íris</span>
+              <span>Retirada na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP</span>
             </div>
             <p className="text-xs">
-              Ideal para quem está ou passa pelo centro comercial de São Paulo. Sem taxa de frete, mediante agendamento após a confirmação.
+              Retire seu pedido diretamente em nossa loja. Sem taxa de frete, mediante agendamento após a confirmação.
             </p>
           </div>
 

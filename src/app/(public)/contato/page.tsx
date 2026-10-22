@@ -85,7 +85,7 @@ export default function ContactPage() {
           <div>
             <h4 className="font-bold text-sm text-brand-dark">Localização de Referência</h4>
             <p className="text-xs text-muted-foreground mt-1">
-              Galeria Arco-Íris, São Paulo - SP. Retiradas presenciais realizadas mediante confirmação e agendamento prévio após a separação das peças pelo WhatsApp.
+              Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP. Retiradas presenciais realizadas mediante confirmação e agendamento prévio após a separação das peças pelo WhatsApp.
             </p>
           </div>
         </div>

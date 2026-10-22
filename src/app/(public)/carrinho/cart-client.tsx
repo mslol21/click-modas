@@ -78,7 +78,7 @@ export function CartClient() {
             <span className="text-muted-foreground">Previsão Entrega:</span>
             <span className="font-semibold text-brand-dark">
               {deliveryMethod === "retirada_galeria_arco_iris"
-                ? "Retirada na Galeria Arco-Íris (SP)"
+                ? "Retirada na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP"
                 : "Motoboy — frete a confirmar"}
             </span>
           </div>
@@ -165,7 +165,7 @@ export function CartClient() {
       // 2. Build structured WhatsApp message link
       const deliveryMethodLabel =
         deliveryMethod === "retirada_galeria_arco_iris"
-          ? "Retirada na Galeria Arco-Íris (São Paulo - SP)"
+          ? "Retirada na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP"
           : "Entrega por motoboy (frete a confirmar)";
 
       const waUrl = buildWhatsAppLink("5511954686239", {
@@ -381,7 +381,7 @@ export function CartClient() {
                 <div className="text-xs space-y-0.5">
                   <span className="font-bold text-brand-dark block flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-brand-purple" />
-                    Retirar na Galeria Arco-Íris (São Paulo)
+                    Retirar na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP
                   </span>
                   <span>Sem custo de frete. Agendamento prévio após separação.</span>
                 </div>

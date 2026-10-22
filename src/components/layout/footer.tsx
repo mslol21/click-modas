@@ -124,7 +124,7 @@ export function Footer() {
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-brand-purple shrink-0 mt-0.5" />
                 <span>
-                  Avenida Doutor Guilherme Abreu Sodré, 94 — São Paulo, SP
+                  Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP
                 </span>
               </div>
               <div className="flex items-start gap-2.5">

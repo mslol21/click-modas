@@ -6,7 +6,7 @@ import { Sparkles, MapPin, Heart, ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Sobre a Loja | Click Modas 25",
   description:
-    "Conheça a história da Click Modas 25, referência em moda infantil do tamanho 2 ao 16 com loja na Galeria Arco-Íris em São Paulo.",
+    "Conheça a história da Click Modas 25, referência em moda infantil do tamanho 2 ao 16 com loja na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP.",
 };
 
 export default async function AboutPage() {
@@ -36,10 +36,10 @@ export default async function AboutPage() {
           <div className="p-4 rounded-2xl bg-muted/40 space-y-1.5">
             <div className="flex items-center gap-2 font-bold text-sm text-brand-dark">
               <MapPin className="w-4 h-4 text-brand-purple" />
-              <span>Polo Comercial de SP</span>
+              <span>Nossa loja em São Paulo</span>
             </div>
             <p className="text-xs">
-              Localizados com ponto de referência na tradicional Galeria Arco-Íris em São Paulo.
+              Visite nossa loja na Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP.
             </p>
           </div>
 

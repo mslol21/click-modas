@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const whatsapp = "https://wa.me/5511954686239?text=" + encodeURIComponent("Olá! Conheci a Click Modas 25 pelo site e gostaria de saber mais sobre as roupas infantis.");
 const instagram = "https://www.instagram.com/clickmodas_kids/";
-const address = "Avenida Doutor Guilherme Abreu Sodré, 94 — São Paulo, SP";
+const address = "Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP";
 const maps = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(address);
 const moments = [
   { number: "01", icon: Sun, title: "Dias de brincar", text: "Combinações leves e descontraídas para acompanhar a energia de quem tem um mundo inteiro para descobrir.", color: "peach" },

@@ -159,7 +159,7 @@ export default function AdminLoginPage() {
         </Card>
 
         <p className="text-[11px] text-center text-muted-foreground">
-          Click Modas 25 • Galeria Arco-Íris, São Paulo • Área protegida por RLS
+          Click Modas 25 • Avenida Doutor Guilherme Abreu Sodre, 94 — CEP 08490-010 — São Paulo, SP • Área protegida por RLS
         </p>
       </div>
     </div>
